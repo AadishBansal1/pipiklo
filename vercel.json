@@ -1,7 +1,7 @@
 {
-  "framework": "nextjs",
-  "installCommand": "pnpm install",
   "buildCommand": "pnpm turbo run build --filter=@pipiklo/web",
+  "installCommand": "pnpm install",
   "outputDirectory": "apps/web/.next",
+  "framework": "nextjs",
   "ignoreCommand": "git diff --quiet HEAD^ HEAD -- apps/web packages"
 }
