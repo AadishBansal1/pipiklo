@@ -1,0 +1,37 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+.next
+dist
+build
+out
+
+# Env files
+.env
+.env.local
+.env.production
+.env*.local
+
+# Cache
+.turbo
+.cache
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+.venv
+venv
+.pytest_cache
+
+# Misc
+.DS_Store
+*.log
+Thumbs.db
+
+# Editor
+.vscode
+.idea
+*.swp

@@ -1,0 +1,264 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  admin
+  customer
+  creator
+}
+
+enum ItemStatus {
+  draft
+  pending
+  approved
+  rejected
+}
+
+enum SubscriptionPlan {
+  free
+  monthly
+  annual
+  team
+}
+
+enum SubscriptionStatus {
+  active
+  cancelled
+  past_due
+  trialing
+}
+
+enum PaymentStatus {
+  pending
+  success
+  failed
+  refunded
+}
+
+enum PayoutStatus {
+  pending
+  processing
+  paid
+  rejected
+}
+
+model User {
+  id          String   @id @default(cuid())
+  clerkId     String   @unique
+  role        UserRole @default(customer)
+  name        String
+  email       String   @unique
+  avatar      String?
+  bio         String?
+  website     String?
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Payout info (stored as JSON for creators)
+  payoutInfo  Json?
+
+  items         Item[]
+  downloads     Download[]
+  licenses      License[]
+  subscription  Subscription?
+  payments      Payment[]
+  earnings      CreatorEarning[]
+  payoutReqs    PayoutRequest[]
+  reviews       Review[]
+  collections   Collection[]
+  aiGenerations AIGeneration[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String?
+  icon        String?
+  parentId    String?
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  itemCount   Int     @default(0)
+
+  items Item[]
+
+  @@map("categories")
+}
+
+model Item {
+  id              String     @id @default(cuid())
+  title           String
+  description     String     @db.Text
+  categoryId      String
+  category        Category   @relation(fields: [categoryId], references: [id])
+  subcategory     String
+  tags            String[]
+  thumbnailUrl    String
+  previewUrls     String[]
+  fileUrl         String?
+  fileSize        String?
+  fileFormat      String?
+  isFree          Boolean    @default(true)
+  price           Float?
+  creatorId       String
+  creator         User       @relation(fields: [creatorId], references: [id])
+  status          ItemStatus @default(pending)
+  downloads       Int        @default(0)
+  views           Int        @default(0)
+  rating          Float      @default(0)
+  ratingCount     Int        @default(0)
+  compatibleTools String[]
+  licenseType     String     @default("standard")
+  rejectionReason String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  itemDownloads Download[]
+  licenses      License[]
+  earnings      CreatorEarning[]
+  reviews       Review[]
+
+  @@map("items")
+}
+
+model Download {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  itemId       String
+  item         Item     @relation(fields: [itemId], references: [id])
+  licenseKey   String   @unique @default(cuid())
+  projectName  String?
+  downloadedAt DateTime @default(now())
+
+  license License?
+
+  @@map("downloads")
+}
+
+model License {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  itemId         String
+  item           Item     @relation(fields: [itemId], references: [id])
+  downloadId     String   @unique
+  download       Download @relation(fields: [downloadId], references: [id])
+  licenseKey     String   @unique
+  projectName    String
+  certificateUrl String?
+  issuedAt       DateTime @default(now())
+  isValid        Boolean  @default(true)
+
+  @@map("licenses")
+}
+
+model Subscription {
+  id                  String             @id @default(cuid())
+  userId              String             @unique
+  user                User               @relation(fields: [userId], references: [id])
+  plan                SubscriptionPlan   @default(free)
+  status              SubscriptionStatus @default(active)
+  razorpaySubId       String?
+  currentPeriodStart  DateTime           @default(now())
+  currentPeriodEnd    DateTime
+  cancelAtPeriodEnd   Boolean            @default(false)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  @@map("subscriptions")
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  userId            String
+  user              User          @relation(fields: [userId], references: [id])
+  amount            Float
+  currency          String        @default("INR")
+  gateway           String        @default("razorpay")
+  status            PaymentStatus @default(pending)
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  metadata          Json?
+  createdAt         DateTime      @default(now())
+
+  @@map("payments")
+}
+
+model CreatorEarning {
+  id             String   @id @default(cuid())
+  creatorId      String
+  creator        User     @relation(fields: [creatorId], references: [id])
+  itemId         String
+  item           Item     @relation(fields: [itemId], references: [id])
+  downloadCount  Int      @default(0)
+  totalEarned    Float    @default(0)
+  pendingPayout  Float    @default(0)
+  paidOut        Float    @default(0)
+  lastDownloadAt DateTime?
+  updatedAt      DateTime @updatedAt
+
+  @@unique([creatorId, itemId])
+  @@map("creator_earnings")
+}
+
+model PayoutRequest {
+  id          String       @id @default(cuid())
+  creatorId   String
+  creator     User         @relation(fields: [creatorId], references: [id])
+  amount      Float
+  status      PayoutStatus @default(pending)
+  requestedAt DateTime     @default(now())
+  processedAt DateTime?
+  notes       String?
+
+  @@map("payout_requests")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  itemId    String
+  item      Item     @relation(fields: [itemId], references: [id])
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  @@unique([userId, itemId])
+  @@map("reviews")
+}
+
+model Collection {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  name      String
+  itemIds   String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("collections")
+}
+
+model AIGeneration {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  tool       String
+  prompt     String
+  resultUrl  String?
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+
+  @@map("ai_generations")
+}
