@@ -5,11 +5,12 @@ import { ItemDetailClient } from './ItemDetailClient'
 import { ItemGrid } from '@/components/browse/ItemGrid'
 
 interface Props {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const item = getItemById(params.id)
+  const { id } = await params
+  const item = getItemById(id)
   if (!item) return { title: 'Item Not Found' }
   return {
     title: item.title,
@@ -20,11 +21,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default function ItemDetailPage({ params }: Props) {
-  const item = getItemById(params.id)
+export default async function ItemDetailPage({ params }: Props) {
+  const { id } = await params
+  const item = getItemById(id)
   if (!item) notFound()
 
-  const similar = getSimilarItems(params.id, 8)
+  const similar = getSimilarItems(id, 8)
 
   return (
     <div className="container mx-auto px-4 py-8">
