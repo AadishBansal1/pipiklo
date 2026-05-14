@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAppStore } from '@/store/app-store'
+import { useClerk } from '@clerk/nextjs'
 import {
   LayoutDashboard, Download, BookMarked, CreditCard, Settings,
   Upload, BarChart2, DollarSign, Package, Users, ShieldCheck,
@@ -53,12 +54,10 @@ const TITLE_MAP = { admin: 'Admin Panel', customer: 'My Account', creator: 'Crea
 export function DashboardSidebar({ variant }: Props) {
   const pathname = usePathname()
   const { user, logout } = useAppStore()
+  const { signOut } = useClerk()
   const handleSignOut = async () => {
-    const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
-    await supabase.auth.signOut()
     logout()
-    window.location.href = '/'
+    await signOut({ redirectUrl: '/' })
   }
   const nav = NAV_MAP[variant]
 

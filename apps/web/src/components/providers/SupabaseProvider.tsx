@@ -1,65 +1,55 @@
 'use client'
 
 import { useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { useUser } from '@clerk/nextjs'
 import { useAppStore } from '@/store/app-store'
 import type { AuthUser } from '@/store/app-store'
 
 export function SupabaseProvider({ children }: { children: React.ReactNode }) {
+  const { user: clerkUser, isLoaded } = useUser()
   const setUser = useAppStore((s) => s.setUser)
 
   useEffect(() => {
-    const supabase = createClient()
+    if (!isLoaded) return
 
-    // Load current session on mount
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (user) {
-        const { data: profile } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', user.id)
-          .single()
+    if (!clerkUser) {
+      setUser(null)
+      return
+    }
 
-        if (profile) {
-          setUser({
-            id: profile.id,
-            name: profile.name ?? user.email?.split('@')[0] ?? 'User',
-            email: profile.email,
-            role: profile.role as AuthUser['role'],
-            avatar: profile.avatar_url ?? `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`,
-          })
-        }
-      }
-    })
+    // Map Clerk user → our AuthUser type
+    // Role comes from Clerk publicMetadata (set by admin) or defaults to 'customer'
+    const role = (clerkUser.publicMetadata?.role as AuthUser['role']) ?? 'customer'
 
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_OUT' || !session) {
-        setUser(null)
-        return
-      }
+    const authUser: AuthUser = {
+      id: clerkUser.id,
+      name: clerkUser.fullName ?? clerkUser.firstName ?? clerkUser.emailAddresses[0]?.emailAddress?.split('@')[0] ?? 'User',
+      email: clerkUser.emailAddresses[0]?.emailAddress ?? '',
+      role,
+      avatar: clerkUser.imageUrl ?? `https://api.dicebear.com/7.x/avataaars/svg?seed=${clerkUser.id}`,
+    }
 
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
+    setUser(authUser)
 
-        if (profile) {
-          setUser({
-            id: profile.id,
-            name: profile.name ?? session.user.email?.split('@')[0] ?? 'User',
-            email: profile.email,
-            role: profile.role as AuthUser['role'],
-            avatar: profile.avatar_url ?? `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.user.id}`,
-          })
-        }
-      }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [setUser])
+    // Upsert user into Supabase (non-blocking, best effort)
+    syncToSupabase(authUser).catch(console.error)
+  }, [clerkUser, isLoaded, setUser])
 
   return <>{children}</>
+}
+
+async function syncToSupabase(user: AuthUser) {
+  try {
+    const { createClient } = await import('@/lib/supabase/client')
+    const supabase = createClient()
+    await supabase.from('users').upsert({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      avatar_url: user.avatar,
+      role: user.role,
+    }, { onConflict: 'id' })
+  } catch {
+    // Supabase sync is optional — app works without it
+  }
 }
