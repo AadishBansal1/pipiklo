@@ -61,13 +61,19 @@ export function DashboardSidebar({ variant }: Props) {
 
   const handleSignOutConfirm = async () => {
     setSigningOut(true)
-    // Clear Zustand persisted store from localStorage so old session doesn't reappear
-    try { localStorage.removeItem('pipiklo-store') } catch {}
-    try { localStorage.removeItem('pipiklo_pending_role') } catch {}
+    try {
+      // Wipe all local storage — clears Zustand + any Clerk client-side cache
+      localStorage.clear()
+      sessionStorage.clear()
+    } catch {}
     logout()
-    await signOut()
-    // Hard redirect — clears all in-memory state
-    window.location.replace('/')
+    try {
+      // Pass redirectUrl explicitly — required in Clerk v7 programmatic signOut
+      await signOut({ redirectUrl: '/' })
+    } catch {
+      // Fallback: hard navigate if Clerk signOut throws
+      window.location.replace('/')
+    }
   }
 
   const nav = NAV_MAP[variant]
