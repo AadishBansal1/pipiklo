@@ -2,20 +2,34 @@
 
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
-import { useLayoutEffect } from 'react'
+import { useEffect } from 'react'
 import { DashboardSidebar } from '@/components/layout/DashboardSidebar'
+import { Sparkles } from 'lucide-react'
 
 export default function CustomerDashboardLayout({ children }: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn } = useUser()
   const router = useRouter()
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (isLoaded && !isSignedIn) {
       router.replace('/sign-in')
     }
   }, [isLoaded, isSignedIn, router])
 
-  if (!isLoaded || !isSignedIn) return null
+  // Show loading spinner while Clerk loads
+  if (!isLoaded) {
+    return (
+      <div className="flex-1 flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-3 text-muted-foreground">
+          <Sparkles className="h-8 w-8 animate-pulse text-brand-500" />
+          <p className="text-sm">Loading…</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Not signed in — redirecting (show nothing to avoid flash)
+  if (!isSignedIn) return null
 
   return (
     <div className="flex flex-1">

@@ -61,9 +61,13 @@ export function DashboardSidebar({ variant }: Props) {
 
   const handleSignOutConfirm = async () => {
     setSigningOut(true)
+    // Clear Zustand persisted store from localStorage so old session doesn't reappear
+    try { localStorage.removeItem('pipiklo-store') } catch {}
+    try { localStorage.removeItem('pipiklo_pending_role') } catch {}
     logout()
     await signOut()
-    window.location.href = '/'
+    // Hard redirect — clears all in-memory state
+    window.location.replace('/')
   }
 
   const nav = NAV_MAP[variant]
