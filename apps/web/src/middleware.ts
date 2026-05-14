@@ -1,37 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
 
-// When NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is set, swap in the real Clerk middleware.
-// Without it (local dev without keys) we skip auth so the UI is fully explorable.
-async function getMiddleware() {
-  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) return null
+export async function middleware(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({ request })
 
-  try {
-    const { clerkMiddleware, createRouteMatcher } = await import('@clerk/nextjs/server')
-    const isProtected = createRouteMatcher(['/dashboard(.*)', '/api/download(.*)'])
-    return clerkMiddleware(async (auth, req) => {
-      if (isProtected(req)) {
-        await (await auth()).protect()
-      }
-    })
-  } catch {
-    return null
-  }
-}
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return request.cookies.getAll() },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+          supabaseResponse = NextResponse.next({ request })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
 
-type MiddlewareFn = (req: NextRequest) => Response | NextResponse | Promise<Response | NextResponse>
-let _middleware: MiddlewareFn | null | undefined
+  // Refresh session — required for Server Components to read auth state
+  await supabase.auth.getUser()
 
-export async function middleware(req: NextRequest) {
-  if (_middleware === undefined) {
-    _middleware = (await getMiddleware()) as MiddlewareFn | null
-  }
-  if (_middleware) return _middleware(req)
-  return NextResponse.next()
+  return supabaseResponse
 }
 
 export const config = {
   matcher: [
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    '/(api|trpc)(.*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

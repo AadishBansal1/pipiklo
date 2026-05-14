@@ -53,6 +53,13 @@ const TITLE_MAP = { admin: 'Admin Panel', customer: 'My Account', creator: 'Crea
 export function DashboardSidebar({ variant }: Props) {
   const pathname = usePathname()
   const { user, logout } = useAppStore()
+  const handleSignOut = async () => {
+    const { createClient } = await import('@/lib/supabase/client')
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    logout()
+    window.location.href = '/'
+  }
   const nav = NAV_MAP[variant]
 
   return (
@@ -119,7 +126,7 @@ export function DashboardSidebar({ variant }: Props) {
       {user && (
         <div className="p-3 border-t">
           <button
-            onClick={() => { logout(); window.location.href = '/' }}
+            onClick={handleSignOut}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors w-full"
           >
             <LogOut className="h-4 w-4 shrink-0" />

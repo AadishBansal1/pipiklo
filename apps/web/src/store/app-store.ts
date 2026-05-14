@@ -39,28 +39,17 @@ export interface StoreItem {
 interface AppStore {
   user: AuthUser | null
   items: StoreItem[]
+  // Auth
+  setUser: (user: AuthUser | null) => void
   login: (email: string, password: string) => { ok: boolean; error?: string }
   adminLogin: (email: string, password: string) => { ok: boolean; error?: string }
   logout: () => void
+  // Items
   submitItem: (item: Omit<StoreItem, 'id' | 'status' | 'downloads' | 'views' | 'rating' | 'ratingCount' | 'submittedAt'>) => void
   approveItem: (id: string) => void
   rejectItem: (id: string, reason: string) => void
   getPendingItems: () => StoreItem[]
   getApprovedItems: () => StoreItem[]
-}
-
-// ─── Demo credentials ─────────────────────────────────────────────────────────
-
-const DEMO_USERS: AuthUser[] = [
-  { id: 'u1', name: 'Aadi Customer', email: 'customer@pipiklo.com', role: 'customer', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=customer' },
-  { id: 'u2', name: 'Priya Creator', email: 'creator@pipiklo.com', role: 'creator', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=creator' },
-  { id: 'u3', name: 'Admin Pipiklo', email: 'admin@pipiklo.com', role: 'admin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin' },
-]
-
-const DEMO_PASSWORDS: Record<string, string> = {
-  'customer@pipiklo.com': 'customer123',
-  'creator@pipiklo.com': 'creator123',
-  'admin@pipiklo.com': 'admin123',
 }
 
 // ─── Seed pending items (demo creator submissions) ────────────────────────────
@@ -115,20 +104,31 @@ export const useAppStore = create<AppStore>()(
       user: null,
       items: SEED_ITEMS,
 
+      setUser: (user) => set({ user }),
+
       login: (email, password) => {
-        const user = DEMO_USERS.find((u) => u.email === email && u.role !== 'admin')
+        // Legacy demo login — kept for fallback
+        const demoUsers: Record<string, AuthUser> = {
+          'customer@pipiklo.com': { id: 'u1', name: 'Aadi Customer', email: 'customer@pipiklo.com', role: 'customer', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=customer' },
+          'creator@pipiklo.com': { id: 'u2', name: 'Priya Creator', email: 'creator@pipiklo.com', role: 'creator', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=creator' },
+        }
+        const passwords: Record<string, string> = {
+          'customer@pipiklo.com': 'customer123',
+          'creator@pipiklo.com': 'creator123',
+        }
+        const user = demoUsers[email]
         if (!user) return { ok: false, error: 'No account found with this email.' }
-        if (DEMO_PASSWORDS[email] !== password) return { ok: false, error: 'Incorrect password.' }
+        if (passwords[email] !== password) return { ok: false, error: 'Incorrect password.' }
         set({ user })
         return { ok: true }
       },
 
       adminLogin: (email, password) => {
-        const user = DEMO_USERS.find((u) => u.email === email && u.role === 'admin')
-        if (!user) return { ok: false, error: 'Admin account not found.' }
-        if (DEMO_PASSWORDS[email] !== password) return { ok: false, error: 'Incorrect password.' }
-        set({ user })
-        return { ok: true }
+        if (email === 'admin@pipiklo.com' && password === 'admin123') {
+          set({ user: { id: 'u3', name: 'Admin Pipiklo', email: 'admin@pipiklo.com', role: 'admin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin' } })
+          return { ok: true }
+        }
+        return { ok: false, error: 'Invalid admin credentials.' }
       },
 
       logout: () => set({ user: null }),

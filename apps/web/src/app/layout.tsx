@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { ClerkProvider } from '@clerk/nextjs'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { SupabaseProvider } from '@/components/providers/SupabaseProvider'
 import { Toaster } from '@/components/ui/toaster'
 import './globals.css'
 
@@ -33,19 +33,17 @@ export const metadata: Metadata = {
   },
 }
 
-const hasClerk = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const inner = (
+  return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          {children}
-          <Toaster />
+          <SupabaseProvider>
+            {children}
+            <Toaster />
+          </SupabaseProvider>
         </ThemeProvider>
       </body>
     </html>
   )
-
-  return hasClerk ? <ClerkProvider>{inner}</ClerkProvider> : inner
 }

@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '@/store/app-store'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Shield, Eye, EyeOff, Sparkles } from 'lucide-react'
 
 export default function AdminLoginPage() {
-  const adminLogin = useAppStore((s) => s.adminLogin)
   const user = useAppStore((s) => s.user)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -15,25 +15,38 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // If already logged in as admin, redirect to dashboard
   useEffect(() => {
-    if (user?.role === 'admin') {
-      window.location.href = '/dashboard/admin'
-    }
+    if (user?.role === 'admin') window.location.href = '/dashboard/admin'
   }, [user])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
     setLoading(true)
-    await new Promise((r) => setTimeout(r, 600))
-    const result = adminLogin(email.trim(), password)
-    if (result.ok) {
-      // Hard redirect — ensures Zustand persist rehydrates from localStorage on load
-      window.location.href = '/dashboard/admin'
-    } else {
+
+    const supabase = createClient()
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    })
+
+    if (signInError) {
+      setError(signInError.message)
       setLoading(false)
-      setError(result.error ?? 'Access denied')
+      return
+    }
+
+    // Verify admin role
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    if (authUser) {
+      const { data: profile } = await supabase.from('users').select('role').eq('id', authUser.id).single()
+      if ((profile as any)?.role === 'admin') {
+        window.location.href = '/dashboard/admin'
+      } else {
+        await supabase.auth.signOut()
+        setError('Access denied. This account does not have admin privileges.')
+        setLoading(false)
+      }
     }
   }
 
@@ -61,14 +74,6 @@ export default function AdminLoginPage() {
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-2xl shadow-black/50">
-          {/* Demo hint */}
-          <button
-            onClick={() => { setEmail('admin@pipiklo.com'); setPassword('admin123'); setError('') }}
-            className="w-full mb-5 px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 hover:bg-red-500/15 transition-colors text-left"
-          >
-            <span className="font-semibold">Demo admin →</span> admin@pipiklo.com / admin123
-          </button>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm text-slate-400 mb-1.5">Admin Email</label>
@@ -114,7 +119,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold text-sm transition-all duration-200 active:scale-98"
+              className="w-full py-3.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold text-sm transition-all duration-200"
             >
               {loading ? 'Verifying…' : 'Sign in as Admin'}
             </button>
