@@ -27,7 +27,7 @@ export default function SignInPage() {
             identityPreviewEditButton: 'text-violet-400',
           },
         }}
-        redirectUrl="/dashboard/customer"
+        fallbackRedirectUrl="/dashboard/customer"
         signUpUrl="/sign-up"
       />
     </div>
