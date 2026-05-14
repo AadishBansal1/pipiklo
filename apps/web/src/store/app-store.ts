@@ -124,8 +124,8 @@ export const useAppStore = create<AppStore>()(
       },
 
       adminLogin: (email, password) => {
-        if (email === 'admin@pipiklo.com' && password === 'admin123') {
-          set({ user: { id: 'u3', name: 'Admin Pipiklo', email: 'admin@pipiklo.com', role: 'admin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin' } })
+        if (email === 'admin@pipiklo.com' && password === 'Admin@2025') {
+          set({ user: { id: 'admin-root', name: 'Admin', email: 'admin@pipiklo.com', role: 'admin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin' } })
           return { ok: true }
         }
         return { ok: false, error: 'Invalid admin credentials.' }

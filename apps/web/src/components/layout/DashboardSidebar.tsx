@@ -79,29 +79,7 @@ export function DashboardSidebar({ variant }: Props) {
         )}
       </div>
 
-      {/* Dashboard type switcher */}
-      <div className="p-3 border-b">
-        <div className="grid grid-cols-3 gap-1 rounded-lg bg-muted p-1">
-          {[
-            { label: 'Customer', href: '/dashboard/customer', active: variant === 'customer' },
-            { label: 'Creator', href: '/dashboard/creator', active: variant === 'creator' },
-            { label: 'Admin', href: '/dashboard/admin', active: variant === 'admin' },
-          ].map((tab) => (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className={cn(
-                'text-xs text-center py-1.5 rounded-md transition-colors font-medium',
-                tab.active ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              {tab.label}
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      <nav className="p-3 space-y-0.5 flex-1">
+<nav className="p-3 space-y-0.5 flex-1">
         {nav.map((item) => {
           const isActive = pathname === item.href
           return (

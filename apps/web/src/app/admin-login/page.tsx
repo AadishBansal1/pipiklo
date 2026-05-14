@@ -3,12 +3,16 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '@/store/app-store'
-import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Shield, Eye, EyeOff, Sparkles } from 'lucide-react'
 
+// Fixed admin credentials — change these to your own
+const ADMIN_EMAIL = 'admin@pipiklo.com'
+const ADMIN_PASSWORD = 'Admin@2025'
+
 export default function AdminLoginPage() {
   const user = useAppStore((s) => s.user)
+  const adminLogin = useAppStore((s) => s.adminLogin)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
@@ -24,29 +28,19 @@ export default function AdminLoginPage() {
     setError('')
     setLoading(true)
 
-    const supabase = createClient()
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    })
-
-    if (signInError) {
-      setError(signInError.message)
+    // Check fixed credentials
+    if (email.trim() !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+      setError('Invalid admin credentials.')
       setLoading(false)
       return
     }
 
-    // Verify admin role
-    const { data: { user: authUser } } = await supabase.auth.getUser()
-    if (authUser) {
-      const { data: profile } = await supabase.from('users').select('role').eq('id', authUser.id).single()
-      if ((profile as any)?.role === 'admin') {
-        window.location.href = '/dashboard/admin'
-      } else {
-        await supabase.auth.signOut()
-        setError('Access denied. This account does not have admin privileges.')
-        setLoading(false)
-      }
+    const result = adminLogin(email.trim(), password)
+    if (result.ok) {
+      window.location.href = '/dashboard/admin'
+    } else {
+      setError(result.error ?? 'Login failed.')
+      setLoading(false)
     }
   }
 
@@ -67,10 +61,13 @@ export default function AdminLoginPage() {
             <Sparkles className="h-6 w-6 text-brand-400" />
             Pipiklo
           </Link>
-          <div className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold">
-            <Shield className="h-3 w-3" />
-            Admin Portal
+          <div className="mt-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold">
+              <Shield className="h-3 w-3" />
+              Admin Portal
+            </div>
           </div>
+          <p className="text-slate-600 text-xs mt-2">Restricted access — authorised personnel only</p>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-2xl shadow-black/50">
@@ -97,7 +94,11 @@ export default function AdminLoginPage() {
                   required
                   className="w-full px-4 py-3 pr-11 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-red-500/40 transition-all"
                 />
-                <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white">
+                <button
+                  type="button"
+                  onClick={() => setShowPw(!showPw)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                >
                   {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
@@ -127,7 +128,9 @@ export default function AdminLoginPage() {
 
           <p className="text-center mt-5 text-xs text-slate-600">
             Not an admin?{' '}
-            <Link href="/login" className="text-brand-400 hover:text-brand-300">Customer login</Link>
+            <Link href="/sign-in" className="text-violet-400 hover:text-violet-300">
+              Customer / Creator login
+            </Link>
           </p>
         </div>
       </motion.div>
