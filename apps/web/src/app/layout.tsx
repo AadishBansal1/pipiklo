@@ -40,8 +40,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
       afterSignOutUrl="/"
-      afterSignInUrl="/dashboard"
-      afterSignUpUrl="/dashboard"
     >
       <html lang="en" suppressHydrationWarning>
         <body className={`${inter.variable} font-sans antialiased`}>
