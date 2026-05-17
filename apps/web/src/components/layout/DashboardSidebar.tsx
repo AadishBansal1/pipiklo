@@ -8,7 +8,8 @@ import { useClerk } from '@clerk/nextjs'
 import {
   LayoutDashboard, Download, BookMarked, CreditCard, Settings,
   Upload, BarChart2, DollarSign, Package, Users, ShieldCheck,
-  Tag, TrendingUp, Sparkles, LogOut, AlertTriangle, Menu, X
+  Tag, TrendingUp, Sparkles, LogOut, AlertTriangle, Menu, X,
+  Banknote
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -24,6 +25,7 @@ const ADMIN_NAV: NavItem[] = [
   { label: 'Content Queue', href: '/dashboard/admin/items', icon: ShieldCheck },
   { label: 'Categories', href: '/dashboard/admin/categories', icon: Tag },
   { label: 'Revenue', href: '/dashboard/admin/revenue', icon: TrendingUp },
+  { label: 'Payments', href: '/dashboard/admin/payments', icon: Banknote },
   { label: 'Settings', href: '/dashboard/admin/settings', icon: Settings },
 ]
 

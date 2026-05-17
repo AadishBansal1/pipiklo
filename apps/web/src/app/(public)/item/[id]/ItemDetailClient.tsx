@@ -104,12 +104,51 @@ export function ItemDetailClient({ item }: Props) {
     if (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && !isSignedIn) return
     setDownloading(true)
     try {
-      await new Promise((r) => setTimeout(r, 1500))
+      // Simulate license key generation + small delay
+      await new Promise((r) => setTimeout(r, 1200))
       const licenseKey = generateLicenseKey()
+
+      // Build a demo "readme" text that mimics a real download package
+      const readmeContent = [
+        `PIPIKLO — ${item.title}`,
+        '═'.repeat(60),
+        '',
+        `License Key : ${licenseKey}`,
+        `Item ID     : ${item.id}`,
+        `Category    : ${item.category}`,
+        `Creator     : ${item.creator?.name ?? 'Pipiklo'}`,
+        `Downloaded  : ${new Date().toLocaleString()}`,
+        '',
+        'LICENSE',
+        '───────',
+        'This asset is licensed under the Pipiklo Commercial License.',
+        'You may use it in unlimited personal and client projects.',
+        'No attribution required. Lifetime commercial usage rights.',
+        'See https://pipiklo.com/license for full terms.',
+        '',
+        'NOTE',
+        '────',
+        'This is a demo download. In production the full source',
+        'files (PSD / ZIP / MP4 etc.) are served from secure R2 storage.',
+        '',
+        '© Pipiklo — https://pipiklo.com',
+      ].join('\n')
+
+      // Trigger browser download
+      const blob = new Blob([readmeContent], { type: 'text/plain' })
+      const url  = URL.createObjectURL(blob)
+      const a    = document.createElement('a')
+      a.href     = url
+      a.download = `pipiklo-${item.id}-${licenseKey}.txt`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+
       setDownloaded(true)
       toast({
-        title: 'Download started!',
-        description: `License key: ${licenseKey}. Check your dashboard for the certificate.`,
+        title: '✅ Download started!',
+        description: `License key: ${licenseKey}. Check your Downloads folder.`,
       })
     } finally {
       setDownloading(false)
