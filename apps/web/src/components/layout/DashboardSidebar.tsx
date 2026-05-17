@@ -2,13 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAppStore } from '@/store/app-store'
 import { useClerk } from '@clerk/nextjs'
 import {
   LayoutDashboard, Download, BookMarked, CreditCard, Settings,
   Upload, BarChart2, DollarSign, Package, Users, ShieldCheck,
-  Tag, TrendingUp, Sparkles, LogOut, AlertTriangle
+  Tag, TrendingUp, Sparkles, LogOut, AlertTriangle, Menu, X
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -58,11 +58,20 @@ export function DashboardSidebar({ variant }: Props) {
   const { signOut } = useClerk()
   const [showConfirm, setShowConfirm] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  // Close sidebar on route change
+  useEffect(() => { setMobileOpen(false) }, [pathname])
+
+  // Lock body scroll when mobile sidebar open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [mobileOpen])
 
   const handleSignOutConfirm = async () => {
     setSigningOut(true)
     try {
-      // Wipe all local storage — clears Zustand + any Clerk client-side cache
       localStorage.clear()
       sessionStorage.clear()
     } catch {}
@@ -71,15 +80,14 @@ export function DashboardSidebar({ variant }: Props) {
       await signOut()
       window.location.replace('/')
     } catch {
-      // Fallback: hard navigate if Clerk signOut throws
       window.location.replace('/')
     }
   }
 
   const nav = NAV_MAP[variant]
 
-  return (
-    <aside className="w-64 shrink-0 border-r min-h-[calc(100vh-64px)] bg-muted/20 flex flex-col">
+  const SidebarContent = () => (
+    <aside className="w-64 shrink-0 border-r min-h-full bg-muted/20 flex flex-col">
       <div className="p-4 border-b">
         <div className="flex items-center gap-2 mb-1">
           <Sparkles className="h-4 w-4 text-brand-500" />
@@ -96,7 +104,7 @@ export function DashboardSidebar({ variant }: Props) {
         )}
       </div>
 
-<nav className="p-3 space-y-0.5 flex-1">
+      <nav className="p-3 space-y-0.5 flex-1">
         {nav.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -126,6 +134,39 @@ export function DashboardSidebar({ variant }: Props) {
             <LogOut className="h-4 w-4 shrink-0" />
             Sign out
           </button>
+        </div>
+      )}
+    </aside>
+  )
+
+  return (
+    <>
+      {/* Mobile toggle button — fixed bottom-left */}
+      <button
+        className="fixed bottom-5 left-5 z-50 lg:hidden flex items-center justify-center w-12 h-12 rounded-full bg-brand-500 text-white shadow-lg hover:bg-brand-600 transition-colors"
+        onClick={() => setMobileOpen(!mobileOpen)}
+        aria-label="Toggle sidebar"
+      >
+        {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+      </button>
+
+      {/* Desktop sidebar — always visible on lg+ */}
+      <div className="hidden lg:flex">
+        <SidebarContent />
+      </div>
+
+      {/* Mobile sidebar — slide-in overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden flex">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setMobileOpen(false)}
+          />
+          {/* Sidebar panel */}
+          <div className="relative flex-shrink-0 h-full overflow-y-auto shadow-2xl">
+            <SidebarContent />
+          </div>
         </div>
       )}
 
@@ -160,6 +201,6 @@ export function DashboardSidebar({ variant }: Props) {
           </div>
         </div>
       )}
-    </aside>
+    </>
   )
 }
