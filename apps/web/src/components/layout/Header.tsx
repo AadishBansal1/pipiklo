@@ -186,10 +186,10 @@ export function Header() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href="/login" className="hidden md:inline-flex text-sm font-medium px-4 py-2 rounded-lg hover:bg-accent transition-colors">
+                <Link href="/sign-in" className="hidden md:inline-flex text-sm font-medium px-4 py-2 rounded-lg hover:bg-accent transition-colors">
                   Log in
                 </Link>
-                <Link href="/login" className="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg bg-brand-500 hover:bg-brand-600 text-white transition-colors">
+                <Link href="/sign-in" className="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg bg-brand-500 hover:bg-brand-600 text-white transition-colors">
                   Get started free
                 </Link>
               </div>
