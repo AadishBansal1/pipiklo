@@ -1,7 +1,8 @@
 'use client'
 
-import { MOCK_LICENSES } from '@/lib/mock-data'
-import { Download, Shield, ExternalLink } from 'lucide-react'
+import Link from 'next/link'
+import { Shield } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default function CustomerLicensesPage() {
   return (
@@ -13,70 +14,16 @@ export default function CustomerLicensesPage() {
         </p>
       </div>
 
-      <div className="space-y-4">
-        {MOCK_LICENSES.map((license) => (
-          <div
-            key={license.id}
-            className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-4">
-                {license.item?.thumbnailUrl && (
-                  <img
-                    src={license.item.thumbnailUrl}
-                    alt={license.item.title}
-                    className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-                  />
-                )}
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
-                    {license.item?.title ?? 'Unknown Item'}
-                  </h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Shield className="w-3 h-3 text-brand-500" />
-                    <span className="text-xs font-mono text-brand-600 dark:text-brand-400">{license.licenseKey}</span>
-                  </div>
-                  {license.projectName && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Project: {license.projectName}</p>
-                  )}
-                  <p className="text-xs text-gray-400 mt-1">
-                    Issued {new Date(license.issuedAt).toLocaleDateString('en-IN', { dateStyle: 'medium' })}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2 flex-shrink-0">
-                <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium rounded-full text-center">
-                  Valid
-                </span>
-                <a
-                  href={license.certificateUrl ?? '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-lg transition-colors"
-                >
-                  <Download className="w-3 h-3" />
-                  Certificate
-                </a>
-                <a
-                  href={`/license?key=${license.licenseKey}`}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-lg transition-colors"
-                >
-                  <ExternalLink className="w-3 h-3" />
-                  Verify
-                </a>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {MOCK_LICENSES.length === 0 && (
-        <div className="text-center py-20 text-gray-400">
-          <Shield className="w-12 h-12 mx-auto mb-3 opacity-30" />
-          <p>No licenses yet. Download assets to generate licenses.</p>
+      <div className="border rounded-xl overflow-hidden">
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <Shield className="h-12 w-12 text-muted-foreground/40 mb-4" />
+          <h3 className="font-semibold text-lg mb-2">No licenses yet</h3>
+          <p className="text-muted-foreground text-sm mb-6">Browse assets and download items to generate license certificates</p>
+          <Link href="/">
+            <Button variant="brand">Browse Assets</Button>
+          </Link>
         </div>
-      )}
+      </div>
     </div>
   )
 }

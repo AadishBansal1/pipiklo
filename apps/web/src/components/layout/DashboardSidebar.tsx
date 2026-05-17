@@ -68,8 +68,8 @@ export function DashboardSidebar({ variant }: Props) {
     } catch {}
     logout()
     try {
-      // Pass redirectUrl explicitly — required in Clerk v7 programmatic signOut
-      await signOut({ redirectUrl: '/' })
+      await signOut()
+      window.location.replace('/')
     } catch {
       // Fallback: hard navigate if Clerk signOut throws
       window.location.replace('/')

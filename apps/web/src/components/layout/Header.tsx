@@ -13,6 +13,7 @@ import { CATEGORY_GROUPS } from '@/lib/categories'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { GoogleTranslate } from '@/components/ui/GoogleTranslate'
 
 export function Header() {
   const { theme, setTheme } = useTheme()
@@ -159,6 +160,7 @@ export function Header() {
 
           {/* Right actions */}
           <div className="flex items-center gap-2 ml-auto">
+            <GoogleTranslate />
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="p-2 rounded-lg hover:bg-accent transition-colors"

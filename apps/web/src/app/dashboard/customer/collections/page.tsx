@@ -1,17 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { getFeaturedItems } from '@/lib/mock-data'
-import { Bookmark, Plus, Trash2 } from 'lucide-react'
+import { Bookmark, Plus } from 'lucide-react'
 import Link from 'next/link'
-
-const MOCK_COLLECTIONS = [
-  { id: '1', name: 'Brand Kit', items: getFeaturedItems(4), updatedAt: new Date() },
-  { id: '2', name: 'Social Media Templates', items: getFeaturedItems(6).slice(2, 6), updatedAt: new Date() },
-]
+import { Button } from '@/components/ui/button'
 
 export default function CustomerCollectionsPage() {
-  const [collections, setCollections] = useState(MOCK_COLLECTIONS)
+  const [collections, setCollections] = useState<{ id: string; name: string; updatedAt: Date }[]>([])
   const [creating, setCreating] = useState(false)
   const [newName, setNewName] = useState('')
 
@@ -19,7 +14,7 @@ export default function CustomerCollectionsPage() {
     if (!newName.trim()) return
     setCollections([
       ...collections,
-      { id: Date.now().toString(), name: newName.trim(), items: [], updatedAt: new Date() },
+      { id: Date.now().toString(), name: newName.trim(), updatedAt: new Date() },
     ])
     setNewName('')
     setCreating(false)
@@ -72,47 +67,44 @@ export default function CustomerCollectionsPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {collections.map((col) => (
-          <div
-            key={col.id}
-            className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
-          >
-            {/* Thumbnail grid */}
-            <div className="grid grid-cols-4 h-28">
-              {col.items.slice(0, 4).map((item) => (
-                <img key={item.id} src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover" />
-              ))}
-              {col.items.length === 0 && (
-                <div className="col-span-4 flex items-center justify-center bg-gray-50 dark:bg-gray-900 text-gray-300">
-                  <Bookmark className="w-10 h-10" />
-                </div>
-              )}
-            </div>
-
-            <div className="p-4 flex items-start justify-between">
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">{col.name}</h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                  {col.items.length} item{col.items.length !== 1 ? 's' : ''} · Updated{' '}
-                  {col.updatedAt.toLocaleDateString()}
-                </p>
-              </div>
-              <button
-                onClick={() => deleteCollection(col.id)}
-                className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
+      {collections.length === 0 && !creating ? (
+        <div className="border rounded-xl overflow-hidden">
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <Bookmark className="h-12 w-12 text-muted-foreground/40 mb-4" />
+            <h3 className="font-semibold text-lg mb-2">No collections yet</h3>
+            <p className="text-muted-foreground text-sm mb-6">Browse assets and save items to create your first collection</p>
+            <Link href="/">
+              <Button variant="brand">Browse Assets</Button>
+            </Link>
           </div>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {collections.map((col) => (
+            <div
+              key={col.id}
+              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+            >
+              <div className="flex items-center justify-center bg-gray-50 dark:bg-gray-900 h-28">
+                <Bookmark className="w-10 h-10 text-gray-300" />
+              </div>
 
-      {collections.length === 0 && !creating && (
-        <div className="text-center py-20 text-gray-400">
-          <Bookmark className="w-12 h-12 mx-auto mb-3 opacity-30" />
-          <p>No collections yet. Create one to start saving assets.</p>
+              <div className="p-4 flex items-start justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">{col.name}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    0 items · Updated {col.updatedAt.toLocaleDateString()}
+                  </p>
+                </div>
+                <button
+                  onClick={() => deleteCollection(col.id)}
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                >
+                  <span className="text-xs">Delete</span>
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

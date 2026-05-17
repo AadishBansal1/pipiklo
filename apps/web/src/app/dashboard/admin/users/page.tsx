@@ -1,15 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Search, MoreVertical, Shield, User, Brush } from 'lucide-react'
+import { Search, MoreVertical, Shield, User, Brush, AlertTriangle } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 
-const MOCK_USERS = [
+type UserStatus = 'active' | 'suspended' | 'banned'
+
+interface MockUser {
+  id: string
+  name: string
+  email: string
+  role: string
+  avatar: string
+  downloads: number
+  items: number
+  joined: string
+  status: UserStatus
+}
+
+const INITIAL_USERS: MockUser[] = [
   { id: '1', name: 'Arjun Sharma', email: 'arjun@creator.com', role: 'creator', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=arjun', downloads: 0, items: 24, joined: '2025-01-15', status: 'active' },
   { id: '2', name: 'Priya Patel', email: 'priya@creator.com', role: 'creator', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=priya', downloads: 0, items: 18, joined: '2025-02-20', status: 'active' },
   { id: '3', name: 'Customer 1', email: 'customer1@example.com', role: 'customer', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=c1', downloads: 47, items: 0, joined: '2025-03-10', status: 'active' },
@@ -24,15 +37,101 @@ const roleConfig = {
   customer: { label: 'Customer', icon: User, color: 'text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400' },
 }
 
+function UserActionsDropdown({
+  user,
+  onBan,
+  onUnban,
+  onRemove,
+}: {
+  user: MockUser
+  onBan: () => void
+  onUnban: () => void
+  onRemove: () => void
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        className="p-1 rounded hover:bg-muted transition-colors"
+        onClick={() => setOpen((v) => !v)}
+      >
+        <MoreVertical className="h-4 w-4 text-muted-foreground" />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-8 z-20 bg-background border rounded-xl shadow-lg w-44 py-1 text-sm">
+          {user.status === 'banned' ? (
+            <button
+              className="w-full text-left px-4 py-2 hover:bg-muted transition-colors text-green-600"
+              onClick={() => { setOpen(false); onUnban() }}
+            >
+              Unban User
+            </button>
+          ) : (
+            <button
+              className="w-full text-left px-4 py-2 hover:bg-muted transition-colors text-amber-600"
+              onClick={() => { setOpen(false); onBan() }}
+            >
+              Ban User
+            </button>
+          )}
+          <button
+            className="w-full text-left px-4 py-2 hover:bg-muted transition-colors text-red-600"
+            onClick={() => { setOpen(false); onRemove() }}
+          >
+            Remove Account
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function AdminUsersPage() {
   const [query, setQuery] = useState('')
   const [roleFilter, setRoleFilter] = useState<string>('all')
+  const [users, setUsers] = useState<MockUser[]>(INITIAL_USERS)
+  const [actionUser, setActionUser] = useState<MockUser | null>(null)
+  const [actionType, setActionType] = useState<'ban' | 'remove' | null>(null)
 
-  const filtered = MOCK_USERS.filter((u) => {
+  const filtered = users.filter((u) => {
     const matchQ = !query || u.name.toLowerCase().includes(query.toLowerCase()) || u.email.toLowerCase().includes(query.toLowerCase())
     const matchR = roleFilter === 'all' || u.role === roleFilter
     return matchQ && matchR
   })
+
+  const openConfirm = (user: MockUser, type: 'ban' | 'remove') => {
+    setActionUser(user)
+    setActionType(type)
+  }
+
+  const closeConfirm = () => {
+    setActionUser(null)
+    setActionType(null)
+  }
+
+  const handleConfirm = () => {
+    if (!actionUser || !actionType) return
+    if (actionType === 'ban') {
+      setUsers((prev) => prev.map((u) => u.id === actionUser.id ? { ...u, status: 'banned' as UserStatus } : u))
+    } else if (actionType === 'remove') {
+      setUsers((prev) => prev.filter((u) => u.id !== actionUser.id))
+    }
+    closeConfirm()
+  }
+
+  const handleUnban = (userId: string) => {
+    setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, status: 'active' as UserStatus } : u))
+  }
 
   return (
     <div className="space-y-6">
@@ -99,16 +198,25 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{formatDate(user.joined)}</td>
                     <td className="px-4 py-3">
-                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
-                        user.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                      }`}>
-                        {user.status}
-                      </span>
+                      {user.status === 'banned' ? (
+                        <span className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                          Banned
+                        </span>
+                      ) : (
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
+                          user.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {user.status}
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
-                      <button className="p-1 rounded hover:bg-muted transition-colors">
-                        <MoreVertical className="h-4 w-4 text-muted-foreground" />
-                      </button>
+                      <UserActionsDropdown
+                        user={user}
+                        onBan={() => openConfirm(user, 'ban')}
+                        onUnban={() => handleUnban(user.id)}
+                        onRemove={() => openConfirm(user, 'remove')}
+                      />
                     </td>
                   </tr>
                 )
@@ -119,6 +227,43 @@ export default function AdminUsersPage() {
             <div className="text-center py-12 text-muted-foreground">No users found</div>
           )}
         </div>
+
+      {/* Confirmation Dialog */}
+      {actionUser && actionType && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-background border rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30 shrink-0">
+                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-sm">
+                  {actionType === 'ban' ? 'Ban User?' : 'Remove Account?'}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Are you sure you want to {actionType === 'ban' ? 'ban' : 'remove'}{' '}
+                  <span className="font-semibold text-foreground">{actionUser.name}</span>?
+                  {actionType === 'remove' && ' This action cannot be undone.'}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={closeConfirm}
+                className="flex-1 py-2.5 rounded-xl border text-sm font-medium hover:bg-accent transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition-colors"
+              >
+                {actionType === 'ban' ? 'Yes, ban user' : 'Yes, remove'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
