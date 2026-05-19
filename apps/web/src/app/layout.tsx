@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { SupabaseProvider } from '@/components/providers/SupabaseProvider'
 import { Toaster } from '@/components/ui/toaster'
+import { SessionGuard } from '@/components/auth/SessionGuard'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <body className={`${inter.variable} font-sans antialiased`}>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
             <SupabaseProvider>
+              <SessionGuard />
               {children}
               <Toaster />
             </SupabaseProvider>
