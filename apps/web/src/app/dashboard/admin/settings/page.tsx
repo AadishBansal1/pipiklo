@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { SignOutSection } from '@/components/auth/SignOutSection'
 
 export default function AdminSettingsPage() {
   const [saved, setSaved] = useState(false)
@@ -77,6 +78,8 @@ export default function AdminSettingsPage() {
           </label>
         ))}
       </section>
+
+      <SignOutSection />
 
       <div className="flex items-center gap-3">
         <button

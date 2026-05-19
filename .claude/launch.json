@@ -4,7 +4,7 @@
     {
       "name": "pipiklo-web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@pipiklo/web", "dev"],
+      "runtimeArgs": ["--dir", "C:\\Users\\Aadi\\Downloads\\Envato\\pipiklo\\apps\\web", "dev"],
       "port": 3000
     }
   ]

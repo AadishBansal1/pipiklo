@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { SignOutSection } from '@/components/auth/SignOutSection'
 
 export default function CreatorSettingsPage() {
   const [saved, setSaved] = useState(false)
@@ -91,6 +92,9 @@ export default function CreatorSettingsPage() {
           </label>
         ))}
       </section>
+
+      {/* Sign out */}
+      <SignOutSection />
 
       <button
         onClick={save}

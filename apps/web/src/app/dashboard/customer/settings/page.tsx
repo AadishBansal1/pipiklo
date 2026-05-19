@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { AuthButtons } from '@/components/auth/AuthButtons'
+import { SignOutSection } from '@/components/auth/SignOutSection'
 
 export default function CustomerSettingsPage() {
   const [saved, setSaved] = useState(false)
@@ -64,6 +65,9 @@ export default function CustomerSettingsPage() {
           </label>
         ))}
       </section>
+
+      {/* Sign out */}
+      <SignOutSection />
 
       {/* Danger zone */}
       <section className="bg-white dark:bg-gray-800 rounded-xl border border-red-200 dark:border-red-900/50 p-6 space-y-3">

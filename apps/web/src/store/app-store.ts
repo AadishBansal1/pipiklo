@@ -13,6 +13,18 @@ export interface AuthUser {
   avatar: string
 }
 
+export interface Sale {
+  id: string
+  customerName: string
+  customerEmail: string
+  plan: 'Monthly' | 'Annual' | 'One-time'
+  amount: number   // in INR
+  gateway: 'razorpay' | 'manual' | 'upi'
+  status: 'completed' | 'pending' | 'refunded'
+  note?: string
+  date: string     // ISO string
+}
+
 export interface StoreItem {
   id: string
   title: string
@@ -39,6 +51,7 @@ export interface StoreItem {
 interface AppStore {
   user: AuthUser | null
   items: StoreItem[]
+  sales: Sale[]
   // Auth
   setUser: (user: AuthUser | null) => void
   login: (email: string, password: string) => { ok: boolean; error?: string }
@@ -50,6 +63,10 @@ interface AppStore {
   rejectItem: (id: string, reason: string) => void
   getPendingItems: () => StoreItem[]
   getApprovedItems: () => StoreItem[]
+  // Sales
+  addSale: (sale: Omit<Sale, 'id' | 'date'>) => void
+  updateSaleStatus: (id: string, status: Sale['status']) => void
+  deleteSale: (id: string) => void
 }
 
 // ─── Seed pending items (demo creator submissions) ────────────────────────────
@@ -103,6 +120,7 @@ export const useAppStore = create<AppStore>()(
     (set, get) => ({
       user: null,
       items: SEED_ITEMS,
+      sales: [],
 
       setUser: (user) => set({ user }),
 
@@ -170,6 +188,17 @@ export const useAppStore = create<AppStore>()(
 
       getPendingItems: () => get().items.filter((i) => i.status === 'pending'),
       getApprovedItems: () => get().items.filter((i) => i.status === 'approved'),
+
+      addSale: (sale) => {
+        const newSale: Sale = { ...sale, id: `sale-${Date.now()}`, date: new Date().toISOString() }
+        set((s) => ({ sales: [newSale, ...s.sales] }))
+      },
+      updateSaleStatus: (id, status) => {
+        set((s) => ({ sales: s.sales.map((sale) => sale.id === id ? { ...sale, status } : sale) }))
+      },
+      deleteSale: (id) => {
+        set((s) => ({ sales: s.sales.filter((sale) => sale.id !== id) }))
+      },
     }),
     { name: 'pipiklo-store' }
   )
