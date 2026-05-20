@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { AuthButtons } from '@/components/auth/AuthButtons'
 import { SignOutSection } from '@/components/auth/SignOutSection'
 
 export default function CustomerSettingsPage() {
@@ -23,7 +22,6 @@ export default function CustomerSettingsPage() {
       <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-gray-900 dark:text-white">Profile</h2>
-          <AuthButtons />
         </div>
         {[
           { label: 'Display Name', placeholder: 'Your name', type: 'text' },

@@ -1,15 +1,26 @@
 'use client'
 
 import { SignIn } from '@clerk/nextjs'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { AlertTriangle } from 'lucide-react'
 
-export default function SignInPage() {
-  const [role, setRole] = useState<'customer' | 'creator'>('customer')
+// Separate component so useSearchParams is inside Suspense
+function ExpiredBanner() {
   const searchParams = useSearchParams()
   const expired = searchParams.get('expired') === '1'
+  if (!expired) return null
+  return (
+    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300">
+      <AlertTriangle className="h-4 w-4 shrink-0" />
+      <p className="text-sm font-medium">Your session expired. Please sign in again to continue.</p>
+    </div>
+  )
+}
+
+export default function SignInPage() {
+  const [role, setRole] = useState<'customer' | 'creator'>('customer')
 
   useEffect(() => {
     const saved = localStorage.getItem('pipiklo_pending_role') as 'customer' | 'creator' | null
@@ -31,13 +42,10 @@ export default function SignInPage() {
 
       <div className="w-full max-w-md space-y-4 relative z-10">
 
-        {/* Session expired banner */}
-        {expired && (
-          <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300">
-            <AlertTriangle className="h-4 w-4 shrink-0" />
-            <p className="text-sm font-medium">Your session expired. Please sign in again to continue.</p>
-          </div>
-        )}
+        {/* Session expired banner — wrapped in Suspense for useSearchParams */}
+        <Suspense fallback={null}>
+          <ExpiredBanner />
+        </Suspense>
 
         {/* Role selector */}
         <div className="flex rounded-xl bg-white/5 border border-white/10 p-1 gap-1">
