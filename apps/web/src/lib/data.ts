@@ -91,7 +91,7 @@ export const getApprovedItems = cache(async (options: {
 
     const { data, error, count } = await query.range(offset, offset + limit - 1)
     if (error) throw error
-    return { items: (data ?? []) as DBItemCard[], total: count ?? 0 }
+    return { items: (data ?? []) as unknown as DBItemCard[], total: count ?? 0 }
   } catch (err) {
     // Fallback to mock data
     const { generateItems, getItemsByCategory } = await import('./mock-data')
@@ -128,7 +128,7 @@ export const getItemById = cache(async (id: string): Promise<DBItem | null> => {
       .eq('status', 'approved')
       .single()
     if (error) throw error
-    return data as DBItem
+    return data as unknown as DBItem
   } catch {
     const { getItemById: mockGet } = await import('./mock-data')
     const item = mockGet(id)
@@ -174,7 +174,7 @@ export const getSimilarItems = cache(async (itemId: string, category: string, li
       .neq('id', itemId)
       .order('downloads', { ascending: false })
       .limit(limit)
-    return (data ?? []) as DBItemCard[]
+    return (data ?? []) as unknown as DBItemCard[]
   } catch {
     const { getSimilarItems: mockSimilar } = await import('./mock-data')
     const items = mockSimilar(itemId, limit)
