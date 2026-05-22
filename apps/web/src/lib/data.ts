@@ -111,8 +111,8 @@ export const getApprovedItems = cache(async (options: {
         is_free: true, price: 0,
         downloads: i.downloads ?? 0, rating: i.rating ?? 0, rating_count: i.ratingCount ?? 0,
         tags: i.tags ?? [], creator_id: i.creator?.id ?? null, created_at: i.createdAt ?? '',
-        users: i.creator ? { name: i.creator.name, avatar_url: i.creator.avatar } : null,
-      })),
+        users: i.creator ? { name: i.creator.name, avatar_url: i.creator.avatar ?? null } : null,
+      })) as unknown as DBItemCard[],
     }
   }
 })
@@ -184,8 +184,8 @@ export const getSimilarItems = cache(async (itemId: string, category: string, li
       is_free: true, price: 0,
       downloads: i.downloads ?? 0, rating: i.rating ?? 0, rating_count: i.ratingCount ?? 0,
       tags: i.tags ?? [], creator_id: i.creator?.id ?? null, created_at: i.createdAt ?? '',
-      users: i.creator ? { name: i.creator.name, avatar_url: i.creator.avatar } : null,
-    }))
+      users: i.creator ? { name: i.creator.name, avatar_url: i.creator.avatar ?? null } : null,
+    })) as unknown as DBItemCard[]
   }
 })
 
