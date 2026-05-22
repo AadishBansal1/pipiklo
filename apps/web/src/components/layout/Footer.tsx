@@ -55,7 +55,7 @@ export function Footer() {
               {[
                 { label: 'Pricing', href: '/pricing' },
                 { label: 'License', href: '/license' },
-                { label: 'Creator Program', href: '/dashboard/creator' },
+                { label: '✦ Creator / Influencer Program', href: '/influencer' },
                 { label: 'Blog', href: '/blog' },
                 { label: 'Help Center', href: '/help' },
               ].map((l) => (

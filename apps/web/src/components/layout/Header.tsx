@@ -8,7 +8,7 @@ import { useTheme } from 'next-themes'
 import {
   Search, Sun, Moon, Menu, X, ChevronDown, ChevronRight,
   Sparkles, LayoutDashboard, LogOut, User, Settings,
-  Home, Tag, CreditCard, Globe
+  Home, Tag, CreditCard, Globe, Instagram, Coins
 } from 'lucide-react'
 import { CATEGORY_GROUPS } from '@/lib/categories'
 import { Button } from '@/components/ui/button'
@@ -172,6 +172,15 @@ export function Header() {
                 <GoogleTranslate />
               </div>
 
+              {/* Creator Program pill — desktop */}
+              <Link
+                href="/influencer"
+                className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 text-xs font-bold hover:from-purple-500/20 hover:to-pink-500/20 transition-all duration-200 shrink-0"
+              >
+                <Instagram className="h-3 w-3" />
+                Creator Program
+              </Link>
+
               {/* Theme toggle */}
               <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="p-2 rounded-lg hover:bg-accent transition-colors" aria-label="Toggle theme">
                 <Sun className="h-4 w-4 hidden dark:block" />
@@ -307,6 +316,9 @@ export function Header() {
 
             {/* Extra links */}
             <div className="border-t pt-3 mt-3 space-y-1">
+              <Link href="/influencer" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent transition-colors text-sm font-medium text-purple-600 dark:text-purple-400">
+                <Instagram className="h-4 w-4" /> Creator Program
+              </Link>
               <Link href="/pricing" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent transition-colors text-sm font-medium text-brand-600">
                 <CreditCard className="h-4 w-4" /> Pricing
               </Link>
