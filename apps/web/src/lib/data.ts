@@ -217,7 +217,7 @@ export function toItemCard(i: DBItemCard): ItemCard {
     id: i.id,
     title: i.title,
     category: i.category as any,
-    subcategory: i.subcategory ?? undefined,
+    subcategory: i.subcategory ?? '',
     thumbnailUrl: i.thumbnail_url ?? `https://picsum.photos/seed/${i.id}/400/300`,
     previewUrls: [],
     isFree: i.is_free,

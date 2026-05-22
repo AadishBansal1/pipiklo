@@ -50,7 +50,7 @@ export default async function ItemDetailPage({ params }: Props) {
     title: item.title,
     description: item.description ?? '',
     category: item.category as any,
-    subcategory: item.subcategory ?? undefined,
+    subcategory: item.subcategory ?? '',
     thumbnailUrl: item.thumbnail_url ?? `https://picsum.photos/seed/${item.id}/400/300`,
     previewUrls: item.preview_urls.length > 0
       ? item.preview_urls
@@ -65,7 +65,7 @@ export default async function ItemDetailPage({ params }: Props) {
     fileFormat: item.file_type ?? undefined,
     compatibleTools: item.compatible_tools,
     tags: item.tags,
-    creatorId: item.creator_id ?? undefined,
+    creatorId: item.creator_id ?? 'unknown',
     creator: item.users
       ? {
           id: item.creator_id ?? 'unknown',
