@@ -275,7 +275,7 @@ export default function InfluencerPage() {
             </div>
 
             {/* Social proof */}
-            <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Users className="h-4 w-4 text-brand-500" />
                 <span><strong className="text-foreground">500+</strong> Active creators</span>

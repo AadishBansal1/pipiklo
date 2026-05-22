@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import { searchItems, generateItems } from '@/lib/mock-data'
 import { FilterSidebar } from '@/components/browse/FilterSidebar'
+import { MobileFilterDrawer } from '@/components/browse/MobileFilterDrawer'
 import { ItemGrid } from '@/components/browse/ItemGrid'
 import { formatNumber } from '@/lib/utils'
 import type { ItemCard } from '@pipiklo/types'
@@ -57,18 +58,21 @@ export function SearchResults({ searchParams }: Props) {
 
   return (
     <div className="flex gap-8">
-      <FilterSidebar currentCategory={category} currentSubcategory={subcategory} />
+      {/* Desktop sidebar */}
+      <div className="hidden lg:block">
+        <FilterSidebar currentCategory={category} currentSubcategory={subcategory} />
+      </div>
 
       <div className="flex-1 min-w-0">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
           <div>
             {q ? (
-              <h1 className="text-2xl font-bold">
+              <h1 className="text-xl sm:text-2xl font-bold">
                 Results for <span className="text-brand-600">&ldquo;{q}&rdquo;</span>
               </h1>
             ) : (
-              <h1 className="text-2xl font-bold">
+              <h1 className="text-xl sm:text-2xl font-bold">
                 {category
                   ? category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
                   : 'All Assets'}
@@ -76,6 +80,8 @@ export function SearchResults({ searchParams }: Props) {
             )}
             <p className="text-muted-foreground text-sm mt-1">{formatNumber(results.length)} results</p>
           </div>
+          {/* Mobile filter button */}
+          <MobileFilterDrawer currentCategory={category} currentSubcategory={subcategory} />
         </div>
 
         <ItemGrid items={paged} />

@@ -5,6 +5,7 @@ import { CATEGORY_GROUPS } from '@/lib/categories'
 import { getApprovedItems, toItemCard } from '@/lib/data'
 import { ItemGrid } from '@/components/browse/ItemGrid'
 import { FilterSidebar } from '@/components/browse/FilterSidebar'
+import { MobileFilterDrawer } from '@/components/browse/MobileFilterDrawer'
 import { formatNumber } from '@/lib/utils'
 
 // ISR: revalidate every 5 minutes
@@ -91,25 +92,32 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       </div>
 
       <div className="flex gap-8 container mx-auto px-4 py-8">
-        <FilterSidebar currentCategory={category} currentSubcategory={sp.subcategory} />
+        {/* Desktop filter sidebar */}
+        <div className="hidden lg:block">
+          <FilterSidebar currentCategory={category} currentSubcategory={sp.subcategory} />
+        </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6 gap-3">
             <p className="text-sm text-muted-foreground">
               {items.length} of {formatNumber(total)} assets
             </p>
-            <div className="flex gap-2">
-              {(['downloads', 'newest', 'rating'] as const).map((s) => (
-                <Link
-                  key={s}
-                  href={`/${category}?${new URLSearchParams({ ...sp, sortBy: s })}`}
-                  className={`text-sm px-3 py-1.5 rounded-lg border transition-colors ${
-                    sortBy === s ? 'bg-brand-500 text-white border-brand-500' : 'hover:bg-muted'
-                  }`}
-                >
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </Link>
-              ))}
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              {/* Mobile filter button */}
+              <MobileFilterDrawer currentCategory={category} currentSubcategory={sp.subcategory} />
+              <div className="flex gap-1.5">
+                {(['downloads', 'newest', 'rating'] as const).map((s) => (
+                  <Link
+                    key={s}
+                    href={`/${category}?${new URLSearchParams({ ...sp, sortBy: s })}`}
+                    className={`text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 rounded-lg border transition-colors ${
+                      sortBy === s ? 'bg-brand-500 text-white border-brand-500' : 'hover:bg-muted'
+                    }`}
+                  >
+                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
 

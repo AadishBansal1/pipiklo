@@ -143,12 +143,12 @@ export default function AdminUsersPage() {
           <Button variant="brand" size="sm">+ Invite User</Button>
         </div>
 
-        <div className="flex gap-3 mb-4">
+        <div className="flex flex-col sm:flex-row gap-3 mb-4">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search users..." className="pl-9" />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {['all', 'admin', 'creator', 'customer'].map((r) => (
               <button
                 key={r}
@@ -162,7 +162,8 @@ export default function AdminUsersPage() {
         </div>
 
         <div className="border rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[600px]">
             <thead className="bg-muted/50">
               <tr>
                 <th className="text-left px-4 py-3 font-medium">User</th>
@@ -226,6 +227,7 @@ export default function AdminUsersPage() {
           {filtered.length === 0 && (
             <div className="text-center py-12 text-muted-foreground">No users found</div>
           )}
+          </div>
         </div>
 
       {/* Confirmation Dialog */}

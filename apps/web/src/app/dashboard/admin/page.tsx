@@ -218,7 +218,7 @@ export default function AdminDashboardPage() {
             </button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto -mx-px">
             <table className="w-full text-sm min-w-[640px]">
               <thead className="bg-muted/40">
                 <tr>

@@ -76,10 +76,13 @@ const nextConfig: NextConfig = {
   // Allow production builds to succeed even with TS type errors in data layer
   // (Supabase inferred types don't perfectly match our manual DBItem interfaces)
   typescript: { ignoreBuildErrors: true },
-  eslint:     { ignoreDuringBuilds: true },
 
-  // Turbopack (already used — keep for build speed)
-  // experimental: { turbo: {} },  // auto-detected via --turbopack flag
+  // Turbopack: pin root to monorepo to suppress multi-lockfile warning
+  experimental: {
+    turbo: {
+      root: 'C:/Users/Aadi/Downloads/Envato/pipiklo',
+    },
+  },
 }
 
 export default nextConfig

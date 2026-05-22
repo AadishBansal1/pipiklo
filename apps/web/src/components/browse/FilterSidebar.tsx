@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { CATEGORY_GROUPS } from '@/lib/categories'
 import { cn } from '@/lib/utils'
 import { Star, ChevronDown } from 'lucide-react'
@@ -14,7 +14,8 @@ interface FilterSidebarProps {
 export function FilterSidebar({ currentCategory, currentSubcategory }: FilterSidebarProps) {
   const router = useRouter()
   const params = useSearchParams()
-  const [openSections, setOpenSections] = useState<string[]>(['category', 'rating'])
+  const pathname = usePathname()
+  const [openSections, setOpenSections] = useState<string[]>(['category', 'subcategory', 'rating'])
 
   function toggle(section: string) {
     setOpenSections((prev) => prev.includes(section) ? prev.filter((s) => s !== section) : [...prev, section])
@@ -25,7 +26,9 @@ export function FilterSidebar({ currentCategory, currentSubcategory }: FilterSid
     if (p.get(key) === value) p.delete(key)
     else p.set(key, value)
     p.delete('page')
-    router.push(`/search?${p.toString()}`)
+    // Stay on same page (category or search)
+    const base = pathname.startsWith('/search') ? '/search' : pathname
+    router.push(`${base}?${p.toString()}`)
   }
 
   const activeGroup = CATEGORY_GROUPS.find((g) => g.slug === currentCategory)

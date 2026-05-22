@@ -8,7 +8,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
     <AuthGuard requiredRole="admin" redirectTo="/admin-login">
       <div className="flex flex-1">
         <DashboardSidebar variant="admin" />
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-4 md:p-6 overflow-auto min-w-0">
           {children}
         </main>
       </div>

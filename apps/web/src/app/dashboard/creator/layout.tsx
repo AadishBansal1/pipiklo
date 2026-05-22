@@ -34,7 +34,7 @@ export default function CreatorDashboardLayout({ children }: { children: React.R
   return (
     <div className="flex flex-1">
       <DashboardSidebar variant="creator" />
-      <main className="flex-1 p-6 overflow-auto">{children}</main>
+      <main className="flex-1 p-4 md:p-6 overflow-auto min-w-0">{children}</main>
     </div>
   )
 }
