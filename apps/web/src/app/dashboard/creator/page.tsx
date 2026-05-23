@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 
 const CreatorEarningsChart = dynamic(
   () => import('@/components/dashboard/LazyCharts').then((m) => m.CreatorEarningsChart),
-  { ssr: false, loading: () => <div className="animate-pulse bg-muted rounded-lg h-[220px]" /> }
+  { ssr: false, loading: () => <div className="shimmer rounded-lg h-[220px]" /> }
 )
 
 export default function CreatorDashboardPage() {

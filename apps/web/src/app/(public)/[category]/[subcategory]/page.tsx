@@ -3,6 +3,7 @@ import { CATEGORY_GROUPS } from '@/lib/categories'
 import { getItemsByCategory } from '@/lib/mock-data'
 import { ItemCard } from '@/components/browse/ItemCard'
 import { FilterSidebar } from '@/components/browse/FilterSidebar'
+import { MobileFilterDrawer } from '@/components/browse/MobileFilterDrawer'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
@@ -43,22 +44,22 @@ export default async function SubcategoryPage({ params, searchParams }: Props) {
     })
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-background">
       {/* Breadcrumb + heading */}
-      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+      <div className="bg-card border-b">
         <div className="max-w-screen-xl mx-auto px-4 py-6">
-          <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-3">
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
             <Link href="/" className="hover:text-brand-600">Home</Link>
             <span>/</span>
             <Link href={`/${cat!.slug}`} className="hover:text-brand-600">{cat!.name}</Link>
             <span>/</span>
-            <span className="text-gray-900 dark:text-white font-medium">{sub!.name}</span>
+            <span className="text-foreground font-medium">{sub!.name}</span>
           </nav>
           <div className="flex items-center gap-3">
             <span className="text-3xl">{cat!.icon}</span>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{sub!.name}</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{sorted.length.toLocaleString()} assets</p>
+              <h1 className="text-2xl font-bold text-foreground">{sub!.name}</h1>
+              <p className="text-sm text-muted-foreground">{sorted.length.toLocaleString()} assets</p>
             </div>
           </div>
         </div>
@@ -70,8 +71,13 @@ export default async function SubcategoryPage({ params, searchParams }: Props) {
         </aside>
 
         <main className="flex-1 min-w-0">
+          {/* Mobile filter access */}
+          <div className="flex items-center justify-end mb-4 lg:hidden">
+            <MobileFilterDrawer currentCategory={category} currentSubcategory={subcategory} />
+          </div>
+
           {sorted.length === 0 ? (
-            <div className="text-center py-20 text-gray-400">No assets found with these filters.</div>
+            <div className="text-center py-20 text-muted-foreground">No assets found with these filters.</div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-5">
               {sorted.map((item) => (
