@@ -187,6 +187,18 @@ export function Header() {
                 <Moon className="h-4 w-4 dark:hidden" />
               </button>
 
+              {/* Token balance — customers only, desktop */}
+              {user?.role === 'customer' && (
+                <Link
+                  href="/pricing"
+                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors shrink-0"
+                  title="Your token balance — click to buy more"
+                >
+                  <Coins className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                  <span className="text-xs font-bold text-amber-700 dark:text-amber-400">{user.tokens} tokens</span>
+                </Link>
+              )}
+
               {/* Auth — desktop */}
               {user ? (
                 <Link href={dashboardHref} className="hidden md:flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-accent transition-colors">
@@ -256,6 +268,12 @@ export function Header() {
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-sm truncate">{user.name}</p>
                   <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                  {user.role === 'customer' && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <Coins className="h-3 w-3 text-amber-500" />
+                      <span className="text-xs font-bold text-amber-600 dark:text-amber-400">{user.tokens} tokens</span>
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (

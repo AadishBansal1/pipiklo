@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Download, BookMarked, CreditCard, Settings,
   Upload, BarChart2, DollarSign, Package, Users, ShieldCheck,
   Tag, TrendingUp, Sparkles, LogOut, AlertTriangle, Menu, X,
-  Banknote
+  Banknote, Coins
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -34,7 +34,7 @@ const CUSTOMER_NAV: NavItem[] = [
   { label: 'Downloads', href: '/dashboard/customer/downloads', icon: Download },
   { label: 'Licenses', href: '/dashboard/customer/licenses', icon: BookMarked },
   { label: 'Collections', href: '/dashboard/customer/collections', icon: Package },
-  { label: 'Subscription', href: '/dashboard/customer/subscription', icon: CreditCard },
+  { label: 'Buy Tokens', href: '/dashboard/customer/subscription', icon: CreditCard },
   { label: 'Settings', href: '/dashboard/customer/settings', icon: Settings },
 ]
 
@@ -109,6 +109,7 @@ export function DashboardSidebar({ variant }: Props) {
       <nav className="p-3 space-y-0.5 flex-1">
         {nav.map((item) => {
           const isActive = pathname === item.href
+          const isBuyTokens = item.label === 'Buy Tokens'
           return (
             <Link
               key={item.href}
@@ -117,11 +118,18 @@ export function DashboardSidebar({ variant }: Props) {
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors',
                 isActive
                   ? 'bg-brand-50 text-brand-700 font-semibold dark:bg-brand-900/30 dark:text-brand-400'
+                  : isBuyTokens
+                  ? 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 font-medium'
                   : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               )}
             >
-              <item.icon className="h-4 w-4 shrink-0" />
+              {isBuyTokens ? <Coins className="h-4 w-4 shrink-0 text-amber-500" /> : <item.icon className="h-4 w-4 shrink-0" />}
               {item.label}
+              {isBuyTokens && user && (
+                <span className="ml-auto text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-bold px-1.5 py-0.5 rounded-full">
+                  {user.tokens}
+                </span>
+              )}
             </Link>
           )
         })}
