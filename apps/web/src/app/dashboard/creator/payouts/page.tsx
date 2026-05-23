@@ -35,7 +35,7 @@ export default function CreatorPayoutsPage() {
           <p className="text-muted-foreground text-sm">Manage your earnings and payout settings</p>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <StatCard title="Pending Payout" value={formatCurrency(12840)} icon={Clock} iconColor="text-yellow-500" />
           <StatCard title="Total Paid Out" value={formatCurrency(38000)} icon={CheckCircle} iconColor="text-brand-500" />
           <StatCard title="Total Earnings" value={formatCurrency(94284.5)} icon={DollarSign} iconColor="text-purple-500" />

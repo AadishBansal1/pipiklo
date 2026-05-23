@@ -7,7 +7,13 @@ import { Toaster } from '@/components/ui/toaster'
 import { SessionGuard } from '@/components/auth/SessionGuard'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+  preload: true,
+  fallback: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+})
 
 export const metadata: Metadata = {
   title: {

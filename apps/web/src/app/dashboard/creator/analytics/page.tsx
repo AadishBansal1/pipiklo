@@ -17,7 +17,9 @@ const topItems = [
   { title: 'UI Components Kit', views: 1844, downloads: 134, revenue: 1608 },
 ]
 
-const SkeletonChart = ({ h }: { h: number }) => <div className="animate-pulse bg-muted rounded-lg" style={{ height: h }} />
+const SkeletonChart = ({ h }: { h: number }) => (
+  <div className="shimmer rounded-lg" style={{ height: h }} />
+)
 
 const AnalyticsViewsChart = dynamic(
   () => import('@/components/dashboard/LazyCharts').then((m) => m.AnalyticsViewsChart),
@@ -30,10 +32,10 @@ const AnalyticsDownloadsChart = dynamic(
 
 export default function CreatorAnalyticsPage() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Analytics</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Views and downloads across all your items</p>
+        <h1 className="text-2xl font-bold">Analytics</h1>
+        <p className="text-sm text-muted-foreground mt-1">Views and downloads across all your items</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -43,42 +45,42 @@ export default function CreatorAnalyticsPage() {
           { label: 'Conversion Rate', value: '6.96%', change: '+0.4%' },
           { label: 'Avg. Rating', value: '4.7 ★', change: '+0.1' },
         ].map((s) => (
-          <div key={s.label} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-            <p className="text-xs text-gray-500 dark:text-gray-400">{s.label}</p>
-            <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{s.value}</p>
+          <div key={s.label} className="bg-card rounded-xl border p-4">
+            <p className="text-xs text-muted-foreground">{s.label}</p>
+            <p className="text-xl font-bold mt-1">{s.value}</p>
             <p className="text-xs text-green-500 mt-0.5">{s.change} vs last month</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-        <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Daily Views — Last 30 Days</h2>
+      <div className="bg-card rounded-xl border p-5 md:p-6">
+        <h2 className="font-semibold mb-4">Daily Views — Last 30 Days</h2>
         <AnalyticsViewsChart data={dailyData} />
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-        <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Daily Downloads — Last 30 Days</h2>
+      <div className="bg-card rounded-xl border p-5 md:p-6">
+        <h2 className="font-semibold mb-4">Daily Downloads — Last 30 Days</h2>
         <AnalyticsDownloadsChart data={dailyData} />
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-        <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Top Performing Items</h2>
+      <div className="bg-card rounded-xl border p-5 md:p-6">
+        <h2 className="font-semibold mb-4">Top Performing Items</h2>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[480px]">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="text-left py-2 font-medium text-gray-500 dark:text-gray-400">Item</th>
-                <th className="text-right py-2 font-medium text-gray-500 dark:text-gray-400">Views</th>
-                <th className="text-right py-2 font-medium text-gray-500 dark:text-gray-400">Downloads</th>
-                <th className="text-right py-2 font-medium text-gray-500 dark:text-gray-400">Revenue</th>
+              <tr className="border-b">
+                <th className="text-left py-2 font-medium text-muted-foreground">Item</th>
+                <th className="text-right py-2 font-medium text-muted-foreground">Views</th>
+                <th className="text-right py-2 font-medium text-muted-foreground">Downloads</th>
+                <th className="text-right py-2 font-medium text-muted-foreground">Revenue</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+            <tbody className="divide-y">
               {topItems.map((item) => (
-                <tr key={item.title}>
-                  <td className="py-3 font-medium text-gray-900 dark:text-white">{item.title}</td>
-                  <td className="py-3 text-right text-gray-600 dark:text-gray-400">{item.views.toLocaleString()}</td>
-                  <td className="py-3 text-right text-gray-600 dark:text-gray-400">{item.downloads}</td>
+                <tr key={item.title} className="hover:bg-muted/30 transition-colors">
+                  <td className="py-3 font-medium">{item.title}</td>
+                  <td className="py-3 text-right text-muted-foreground">{item.views.toLocaleString()}</td>
+                  <td className="py-3 text-right text-muted-foreground">{item.downloads}</td>
                   <td className="py-3 text-right font-medium text-green-600 dark:text-green-400">
                     ₹{item.revenue.toLocaleString('en-IN')}
                   </td>

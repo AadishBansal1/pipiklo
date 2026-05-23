@@ -56,8 +56,8 @@ export default function CustomerSubscriptionPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Subscription</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage your plan and billing</p>
+        <h1 className="text-2xl font-bold text-foreground">Subscription</h1>
+        <p className="text-sm text-muted-foreground mt-1">Manage your plan and billing</p>
       </div>
 
       {/* Current plan banner */}
@@ -78,14 +78,14 @@ export default function CustomerSubscriptionPage() {
 
       {/* Billing toggle */}
       <div className="flex items-center gap-3">
-        <span className={`text-sm ${billing === 'monthly' ? 'font-medium text-gray-900 dark:text-white' : 'text-gray-500'}`}>Monthly</span>
+        <span className={`text-sm ${billing === 'monthly' ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>Monthly</span>
         <button
           onClick={() => setBilling(billing === 'monthly' ? 'yearly' : 'monthly')}
-          className={`relative w-11 h-6 rounded-full transition-colors ${billing === 'yearly' ? 'bg-brand-500' : 'bg-gray-300 dark:bg-gray-600'}`}
+          className={`relative w-11 h-6 rounded-full transition-colors ${billing === 'yearly' ? 'bg-brand-500' : 'bg-muted'}`}
         >
           <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${billing === 'yearly' ? 'translate-x-5' : ''}`} />
         </button>
-        <span className={`text-sm ${billing === 'yearly' ? 'font-medium text-gray-900 dark:text-white' : 'text-gray-500'}`}>
+        <span className={`text-sm ${billing === 'yearly' ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>
           Yearly <span className="text-brand-500 text-xs font-semibold">Save 20%</span>
         </span>
       </div>
@@ -98,7 +98,7 @@ export default function CustomerSubscriptionPage() {
             className={`rounded-xl border p-6 flex flex-col ${
               plan.id === 'pro'
                 ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/10'
-                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
+                : 'border bg-card'
             }`}
           >
             {plan.id === 'pro' && (
@@ -107,20 +107,20 @@ export default function CustomerSubscriptionPage() {
                 MOST POPULAR
               </div>
             )}
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">{plan.name}</h3>
+            <h3 className="text-lg font-bold text-foreground">{plan.name}</h3>
             <div className="mt-2 mb-1">
-              <span className="text-3xl font-bold text-gray-900 dark:text-white">
+              <span className="text-3xl font-bold text-foreground">
                 {billing === 'yearly' && plan.id !== 'free'
                   ? `₹${Math.round(parseInt(plan.price.replace(/[₹,]/g, '')) * 0.8).toLocaleString('en-IN')}`
                   : plan.price}
               </span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">{plan.period}</span>
+              <span className="text-sm text-muted-foreground">{plan.period}</span>
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{plan.description}</p>
+            <p className="text-sm text-muted-foreground mb-4">{plan.description}</p>
 
             <ul className="space-y-2 flex-1 mb-6">
               {plan.features.map((f) => (
-                <li key={f} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <li key={f} className="flex items-start gap-2 text-sm text-foreground">
                   <Check className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
                   {f}
                 </li>
@@ -131,10 +131,10 @@ export default function CustomerSubscriptionPage() {
               disabled={plan.current}
               className={`w-full py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 plan.current
-                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
+                  ? 'bg-muted text-muted-foreground cursor-not-allowed'
                   : plan.id === 'pro'
                   ? 'bg-brand-500 hover:bg-brand-600 text-white'
-                  : 'border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                  : 'border hover:bg-accent text-foreground'
               }`}
             >
               {plan.current ? 'Current Plan' : plan.cta}
@@ -144,9 +144,9 @@ export default function CustomerSubscriptionPage() {
       </div>
 
       {/* Billing history */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-        <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Billing History</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400">No billing history. You are on the free plan.</p>
+      <div className="bg-card rounded-xl border p-6">
+        <h2 className="font-semibold text-foreground mb-4">Billing History</h2>
+        <p className="text-sm text-muted-foreground">No billing history. You are on the free plan.</p>
       </div>
     </div>
   )

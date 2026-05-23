@@ -41,7 +41,7 @@ export function HeroBanner() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-[#030712] text-white min-h-[92vh] flex flex-col justify-center">
+    <section className="relative overflow-hidden bg-[#030712] text-white min-h-[80vh] sm:min-h-[88vh] flex flex-col justify-center">
 
       {/* Animated gradient orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -70,7 +70,7 @@ export function HeroBanner() {
         />
       </div>
 
-      <div className="relative container mx-auto px-4 py-24 md:py-32">
+      <div className="relative container mx-auto px-4 py-16 sm:py-24 md:py-32">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -92,7 +92,7 @@ export function HeroBanner() {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="text-center max-w-5xl mx-auto mb-6"
         >
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight">
+          <h1 className="text-[2.5rem] sm:text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight">
             Unlimited{' '}
             <span className="relative inline-block">
               <AnimatePresence mode="wait">
@@ -118,7 +118,7 @@ export function HeroBanner() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-center text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12"
+          className="text-center text-base sm:text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 sm:mb-12"
         >
           Create with AI tools, and unlimited stock, fonts, videos, music, templates & more.
           All with a lifetime commercial license.
@@ -155,7 +155,7 @@ export function HeroBanner() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-2 mb-20"
+          className="flex flex-wrap items-center justify-center gap-2 mb-12 sm:mb-20"
         >
           <span className="text-sm text-slate-500">Trending:</span>
           {TRENDING.map((term, i) => (

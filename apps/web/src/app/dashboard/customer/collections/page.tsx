@@ -28,8 +28,8 @@ export default function CustomerCollectionsPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Collections</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <h1 className="text-2xl font-bold text-foreground">Collections</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Organise saved assets into named collections
           </p>
         </div>
@@ -43,14 +43,14 @@ export default function CustomerCollectionsPage() {
       </div>
 
       {creating && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-brand-300 dark:border-brand-700 p-5 flex items-center gap-3">
+        <div className="bg-card rounded-xl border border-brand-300 dark:border-brand-700 p-5 flex items-center gap-3">
           <input
             autoFocus
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && createCollection()}
             placeholder="Collection name…"
-            className="flex-1 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="flex-1 px-3 py-2 rounded-lg border bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
           <button
             onClick={createCollection}
@@ -60,7 +60,7 @@ export default function CustomerCollectionsPage() {
           </button>
           <button
             onClick={() => setCreating(false)}
-            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm rounded-lg"
+            className="px-4 py-2 bg-muted text-muted-foreground text-sm rounded-lg"
           >
             Cancel
           </button>
@@ -83,22 +83,22 @@ export default function CustomerCollectionsPage() {
           {collections.map((col) => (
             <div
               key={col.id}
-              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+              className="bg-card rounded-xl border overflow-hidden"
             >
-              <div className="flex items-center justify-center bg-gray-50 dark:bg-gray-900 h-28">
-                <Bookmark className="w-10 h-10 text-gray-300" />
+              <div className="flex items-center justify-center bg-muted/40 h-28">
+                <Bookmark className="w-10 h-10 text-muted-foreground/30" />
               </div>
 
               <div className="p-4 flex items-start justify-between">
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">{col.name}</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  <h3 className="font-semibold text-foreground">{col.name}</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     0 items · Updated {col.updatedAt.toLocaleDateString()}
                   </p>
                 </div>
                 <button
                   onClick={() => deleteCollection(col.id)}
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                  className="p-1.5 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                 >
                   <span className="text-xs">Delete</span>
                 </button>

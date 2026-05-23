@@ -22,7 +22,7 @@ const pendingPayouts = [
 ]
 
 const fmt = (v: number) => `₹${(v / 100).toLocaleString('en-IN')}`
-const SkeletonChart = ({ h }: { h: number }) => <div className="animate-pulse bg-muted rounded-lg" style={{ height: h }} />
+const SkeletonChart = ({ h }: { h: number }) => <div className="shimmer rounded-lg" style={{ height: h }} />
 
 const AdminRevenueAreaChart = dynamic(
   () => import('@/components/dashboard/LazyCharts').then((m) => m.AdminRevenueAreaChart),
@@ -43,8 +43,8 @@ export default function AdminRevenuePage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Revenue</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Platform earnings and creator payouts</p>
+        <h1 className="text-2xl font-bold text-foreground">Revenue</h1>
+        <p className="text-sm text-muted-foreground mt-1">Platform earnings and creator payouts</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -53,23 +53,23 @@ export default function AdminRevenuePage() {
           { label: 'Creator Payouts (30%)', value: fmt(totalPayouts), color: 'text-orange-500' },
           { label: 'Net Revenue (70%)', value: fmt(totalNet), color: 'text-green-600' },
         ].map((card) => (
-          <div key={card.label} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <p className="text-sm text-gray-500 dark:text-gray-400">{card.label}</p>
+          <div key={card.label} className="bg-card rounded-xl border p-6">
+            <p className="text-sm text-muted-foreground">{card.label}</p>
             <p className={`text-2xl font-bold mt-1 ${card.color}`}>{card.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-card rounded-xl border p-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-semibold text-gray-900 dark:text-white">Revenue Breakdown</h2>
+          <h2 className="font-semibold text-foreground">Revenue Breakdown</h2>
           <div className="flex gap-2">
             {(['7d', '30d', '90d'] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
                 className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                  period === p ? 'bg-brand-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                  period === p ? 'bg-brand-500 text-white' : 'bg-muted text-muted-foreground'
                 }`}
               >
                 {p}
@@ -80,14 +80,14 @@ export default function AdminRevenuePage() {
         <AdminRevenueAreaChart data={monthlyData} />
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-        <h2 className="font-semibold text-gray-900 dark:text-white mb-6">Monthly Payouts vs Net</h2>
+      <div className="bg-card rounded-xl border p-6">
+        <h2 className="font-semibold text-foreground mb-6">Monthly Payouts vs Net</h2>
         <AdminRevenueBarChart data={monthlyData} />
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-card rounded-xl border p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-gray-900 dark:text-white">Pending Creator Payouts</h2>
+          <h2 className="font-semibold text-foreground">Pending Creator Payouts</h2>
           <button className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium rounded-lg transition-colors">
             Process All
           </button>
@@ -95,20 +95,20 @@ export default function AdminRevenuePage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="text-left py-3 font-medium text-gray-500 dark:text-gray-400">Creator</th>
-                <th className="text-right py-3 font-medium text-gray-500 dark:text-gray-400">Amount</th>
-                <th className="text-right py-3 font-medium text-gray-500 dark:text-gray-400">Items</th>
-                <th className="text-right py-3 font-medium text-gray-500 dark:text-gray-400">Status</th>
-                <th className="text-right py-3 font-medium text-gray-500 dark:text-gray-400">Action</th>
+              <tr className="border-b">
+                <th className="text-left py-3 font-medium text-muted-foreground">Creator</th>
+                <th className="text-right py-3 font-medium text-muted-foreground">Amount</th>
+                <th className="text-right py-3 font-medium text-muted-foreground">Items</th>
+                <th className="text-right py-3 font-medium text-muted-foreground">Status</th>
+                <th className="text-right py-3 font-medium text-muted-foreground">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+            <tbody className="divide-y divide-border">
               {pendingPayouts.map((row) => (
                 <tr key={row.creator}>
-                  <td className="py-3 font-medium text-gray-900 dark:text-white">{row.creator}</td>
-                  <td className="py-3 text-right text-gray-700 dark:text-gray-300">₹{row.amount.toLocaleString('en-IN')}</td>
-                  <td className="py-3 text-right text-gray-500 dark:text-gray-400">{row.items}</td>
+                  <td className="py-3 font-medium text-foreground">{row.creator}</td>
+                  <td className="py-3 text-right text-foreground">₹{row.amount.toLocaleString('en-IN')}</td>
+                  <td className="py-3 text-right text-muted-foreground">{row.items}</td>
                   <td className="py-3 text-right">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                       row.status === 'processing'
