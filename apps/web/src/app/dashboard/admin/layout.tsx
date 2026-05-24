@@ -5,7 +5,7 @@ import { DashboardSidebar } from '@/components/layout/DashboardSidebar'
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AuthGuard requiredRole="admin" redirectTo="/admin-login">
+    <AuthGuard requiredRole="admin" redirectTo="/pipiklo-ctrl">
       <div className="flex flex-1">
         <DashboardSidebar variant="admin" />
         <main className="flex-1 p-4 md:p-6 overflow-auto min-w-0">

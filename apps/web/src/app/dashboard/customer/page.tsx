@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '@/store/app-store'
-import { Download, BookMarked, Heart, Coins, Plus, ArrowRight, Sparkles, Package } from 'lucide-react'
+import { Download, BookMarked, Heart, Coins, Plus, ArrowRight, Sparkles, Package, X, PartyPopper, Zap, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useState, useEffect } from 'react'
 
 const TOKEN_PACKS = [
   { tokens: 5,   price: 99,   id: 'starter', label: 'Starter' },
@@ -24,14 +25,108 @@ const CATEGORIES = [
 ]
 
 export default function CustomerDashboardPage() {
-  const { user, addTokens } = useAppStore()
+  const { user } = useAppStore()
   const tokens = user?.tokens ?? 0
   const totalDownloads = user?.totalDownloads ?? 0
-
   const isLow = tokens <= 1
+  const [showWelcome, setShowWelcome] = useState(false)
+
+  useEffect(() => {
+    if (sessionStorage.getItem('pipiklo_new_user') === '1') {
+      setShowWelcome(true)
+      sessionStorage.removeItem('pipiklo_new_user')
+    }
+  }, [])
 
   return (
     <div className="space-y-6">
+
+      {/* ── Welcome Banner (new users only) ── */}
+      <AnimatePresence>
+        {showWelcome && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -16, scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            className="relative rounded-2xl overflow-hidden p-px"
+            style={{
+              background: 'linear-gradient(135deg, rgba(22,163,74,0.6), rgba(99,102,241,0.4), rgba(245,158,11,0.4))',
+              boxShadow: '0 0 40px rgba(22,163,74,0.2), 0 0 80px rgba(22,163,74,0.08)',
+            }}
+          >
+            <div className="relative rounded-2xl p-5 overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, #0d1f14, #0e0e1a)' }}>
+              {/* Background glow */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full"
+                  style={{ background: 'radial-gradient(circle, rgba(22,163,74,0.15), transparent 70%)' }} />
+                <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full"
+                  style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.12), transparent 70%)' }} />
+              </div>
+
+              <button
+                onClick={() => setShowWelcome(false)}
+                className="absolute top-3 right-3 h-7 w-7 rounded-full flex items-center justify-center text-white/30 hover:text-white hover:bg-white/10 transition-all"
+              >
+                <X className="h-4 w-4" />
+              </button>
+
+              <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                {/* Icon */}
+                <div className="h-14 w-14 rounded-2xl flex items-center justify-center shrink-0"
+                  style={{ background: 'linear-gradient(135deg, #16a34a, #059669)', boxShadow: '0 0 24px rgba(22,163,74,0.5)' }}>
+                  <PartyPopper className="h-7 w-7 text-white" />
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-black text-white mb-1">
+                    Welcome to Pipiklo, {user?.name?.split(' ')[0] ?? 'there'}! 🎉
+                  </h3>
+                  <p className="text-sm text-white/60 mb-3">
+                    Your account is ready. We've added <span className="text-amber-400 font-bold">3 free tokens</span> to your wallet — start downloading amazing assets right now!
+                  </p>
+                  <div className="flex flex-wrap items-center gap-3">
+                    {/* Token pills */}
+                    {[1, 2, 3].map((n) => (
+                      <motion.div
+                        key={n}
+                        initial={{ scale: 0, rotate: -10 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ delay: 0.2 + n * 0.1, type: 'spring', stiffness: 400 }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold"
+                        style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.35)', color: '#fbbf24' }}
+                      >
+                        <Coins className="h-3 w-3" />
+                        Token {n}
+                      </motion.div>
+                    ))}
+                    <div className="flex items-center gap-1.5 text-xs text-white/30">
+                      <Shield className="h-3 w-3" />
+                      Commercial license included
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 shrink-0">
+                  <Button variant="brand" size="sm" className="gap-1.5 font-bold shadow-lg shadow-brand-500/30" asChild>
+                    <Link href="/">
+                      <Sparkles className="h-3.5 w-3.5" />
+                      Browse Assets
+                    </Link>
+                  </Button>
+                  <Button size="sm" variant="outline" className="text-xs border-white/10 text-white/60 hover:text-white hover:bg-white/5" asChild>
+                    <Link href="/pricing">
+                      <Zap className="h-3.5 w-3.5" />
+                      Get More Tokens
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Greeting */}
       <div>
@@ -95,12 +190,12 @@ export default function CustomerDashboardPage() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {TOKEN_PACKS.map((pack) => (
-            <div
+            <Link
               key={pack.id}
-              className={`relative rounded-2xl border p-4 flex items-center justify-between cursor-pointer transition-all hover:shadow-md ${
+              href="/dashboard/customer/subscription"
+              className={`relative rounded-2xl border p-4 flex items-center justify-between transition-all hover:shadow-md ${
                 pack.highlight ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-900/10' : 'bg-card hover:border-brand-300'
               }`}
-              onClick={() => addTokens(pack.tokens, pack.label, pack.price)}
             >
               {pack.highlight && (
                 <div className="absolute -top-2.5 left-4 bg-brand-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">
@@ -118,11 +213,11 @@ export default function CustomerDashboardPage() {
               </div>
               <div className="text-right">
                 <p className="font-black text-lg">₹{pack.price}</p>
-                <Button size="sm" variant={pack.highlight ? 'brand' : 'outline'} className="text-xs h-7 px-3 mt-1">
-                  Buy
+                <Button size="sm" variant={pack.highlight ? 'brand' : 'outline'} className="text-xs h-7 px-3 mt-1" asChild>
+                  <span>Buy</span>
                 </Button>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

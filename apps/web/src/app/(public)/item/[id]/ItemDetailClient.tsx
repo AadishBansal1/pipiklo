@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useSafeUser } from '@/components/auth/useSafeUser'
 import { useAppStore } from '@/store/app-store'
 import {
   Download, Star, Eye, Tag, CheckCircle2, Shield,
@@ -133,7 +132,6 @@ function PreviewLightbox({
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export function ItemDetailClient({ item }: Props) {
-  const { isSignedIn } = useSafeUser()
   const { user, useToken } = useAppStore()
   const [activeImg, setActiveImg] = useState(0)
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
@@ -143,7 +141,7 @@ export function ItemDetailClient({ item }: Props) {
 
   const attributes = getAttributes(item)
   const tokenCost = 1
-  const canDownload = isSignedIn || !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  const canDownload = !!user
   const hasTokens = (user?.tokens ?? 0) >= tokenCost
 
   async function handleDownload() {
@@ -158,8 +156,25 @@ export function ItemDetailClient({ item }: Props) {
       const spent = useToken(tokenCost)
       if (!spent) { toast({ title: 'Token error', description: 'Could not deduct token.', variant: 'destructive' }); return }
 
-      await new Promise((r) => setTimeout(r, 1200))
       const licenseKey = generateLicenseKey()
+
+      // Persist to Supabase in background (non-blocking)
+      if (user?.id) {
+        import('@/lib/supabase/db').then(({ dbUseToken, dbRecordDownload }) => {
+          // Deduct token in DB
+          dbUseToken(user.id, tokenCost).catch(console.error)
+          // Record download + credit creator
+          dbRecordDownload({
+            userId: user.id,
+            itemId: item.id,
+            licenseKey,
+            creatorId: item.creator?.id ?? '',
+            itemTitle: item.title,
+          }).catch(console.error)
+        }).catch(console.error)
+      }
+
+      await new Promise((r) => setTimeout(r, 800))
 
       const content = [
         `PIPIKLO — ${item.title}`,
@@ -379,7 +394,7 @@ export function ItemDetailClient({ item }: Props) {
                 )}
 
                 {/* New user CTA */}
-                {!isSignedIn && (
+                {!user && (
                   <p className="text-center text-xs text-muted-foreground">
                     New? <Link href="/sign-up" className="text-brand-600 font-semibold hover:underline">Sign up free</Link> and get <strong>3 tokens</strong> instantly
                   </p>

@@ -55,9 +55,6 @@ export function Footer() {
               {[
                 { label: 'Pricing', href: '/pricing' },
                 { label: 'License', href: '/license' },
-                { label: '✦ Creator / Influencer Program', href: '/influencer' },
-                { label: 'Blog', href: '/blog' },
-                { label: 'Help Center', href: '/help' },
               ].map((l) => (
                 <li key={l.href}>
                   <Link href={l.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -73,11 +70,7 @@ export function Footer() {
             <h4 className="font-semibold mb-4 text-sm">Legal</h4>
             <ul className="space-y-2">
               {[
-                { label: 'Terms of Service', href: '/terms' },
-                { label: 'Privacy Policy', href: '/privacy' },
-                { label: 'Cookie Policy', href: '/cookies' },
                 { label: 'License Agreement', href: '/license' },
-                { label: 'DMCA', href: '/dmca' },
               ].map((l) => (
                 <li key={l.href}>
                   <Link href={l.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">

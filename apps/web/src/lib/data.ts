@@ -152,7 +152,7 @@ export const getItemById = cache(async (id: string): Promise<DBItem | null> => {
       file_type: item.fileFormat ?? null,
       compatible_tools: item.compatibleTools ?? [],
       created_at: item.createdAt ?? '',
-      users: item.creator ? { name: item.creator.name, avatar_url: item.creator.avatar } : null,
+      users: item.creator ? { name: item.creator.name, avatar_url: item.creator.avatar ?? null } : null,
     }
   }
 })
@@ -221,7 +221,6 @@ export function toItemCard(i: DBItemCard): ItemCard {
     thumbnailUrl: i.thumbnail_url ?? `https://picsum.photos/seed/${i.id}/400/300`,
     previewUrls: [],
     isFree: i.is_free,
-    price: i.price > 0 ? i.price : undefined,
     downloads: i.downloads,
     rating: i.rating,
     ratingCount: i.rating_count,

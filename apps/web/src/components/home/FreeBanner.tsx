@@ -5,17 +5,17 @@ import { motion } from 'framer-motion'
 import { CheckCircle2, ArrowRight, Zap, Shield, Download } from 'lucide-react'
 
 const FEATURES = [
-  { icon: Download, text: 'Unlimited downloads of 27M+ creative assets' },
-  { icon: Zap, text: 'AI Tools: video, image, audio generation' },
+  { icon: Download, text: '27M+ premium creative assets — templates, video, audio, fonts, 3D' },
+  { icon: Zap, text: 'AI Tools: image, video, music & voice generation' },
   { icon: Shield, text: 'Lifetime commercial license on every download' },
   { icon: CheckCircle2, text: 'No watermarks, no attribution required' },
-  { icon: CheckCircle2, text: 'New assets added daily by verified creators' },
+  { icon: CheckCircle2, text: 'Token-based — buy once, download anytime, tokens never expire' },
 ]
 
 const PLAN_ROWS = [
-  { label: 'Downloads', value: 'Unlimited' },
+  { label: 'Starting tokens', value: '3 Free' },
   { label: 'Commercial license', value: '✓ Included' },
-  { label: 'AI tools', value: '✓ Included' },
+  { label: 'AI tools access', value: '✓ Included' },
   { label: 'Watermarks', value: 'None' },
   { label: 'Attribution required', value: 'Never' },
 ]
@@ -55,7 +55,7 @@ export function FreeBanner() {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-emerald-400"> amazing content</span>
             </h2>
             <p className="text-slate-400 mb-8 text-base leading-relaxed">
-              Join 12,000+ creators and designers who use Pipiklo to power their creative projects.
+              Join 12,000+ designers, editors, and marketers who use Pipiklo to power their creative projects.
             </p>
 
             <ul className="space-y-3 mb-10">
@@ -78,7 +78,7 @@ export function FreeBanner() {
 
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/"
+                href="/sign-up"
                 className="inline-flex items-center gap-2 bg-brand-500 hover:bg-brand-600 active:scale-95 text-white font-bold px-7 py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-brand-500/25"
               >
                 Get started free
@@ -112,7 +112,7 @@ export function FreeBanner() {
                   Launch Offer
                 </div>
                 <p className="text-6xl font-black text-white mb-1">FREE</p>
-                <p className="text-slate-400 text-sm">All assets included</p>
+                <p className="text-slate-400 text-sm">3 tokens on signup · no card needed</p>
               </div>
 
               <div className="relative space-y-3 border-t border-white/10 pt-6">

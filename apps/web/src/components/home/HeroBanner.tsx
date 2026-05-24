@@ -12,14 +12,14 @@ const ROTATING_WORDS = ['Templates', 'Videos', 'Music', 'Graphics', 'Fonts', '3D
 const FLOATING_PILLS = [
   { label: '🎨 27M+ Assets', delay: 0, x: -60, y: 20 },
   { label: '⚡ AI Powered', delay: 0.4, x: 55, y: -15 },
-  { label: '🆓 Free Forever', delay: 0.8, x: -40, y: -25 },
+  { label: '🆓 3 Free Tokens', delay: 0.8, x: -40, y: -25 },
   { label: '📄 Commercial License', delay: 1.2, x: 50, y: 30 },
 ]
 
 const STATS = [
   { label: 'Creative Assets', value: '27M+' },
   { label: 'Downloads', value: '892K+' },
-  { label: 'Active Creators', value: '384+' },
+  { label: 'Active Members', value: '12K+' },
   { label: 'Categories', value: '10+' },
 ]
 
@@ -41,7 +41,7 @@ export function HeroBanner() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-[#030712] text-white min-h-[80vh] sm:min-h-[88vh] flex flex-col justify-center">
+    <section className="relative overflow-hidden bg-[#030712] text-white min-h-[75vh] sm:min-h-[82vh] flex flex-col justify-center">
 
       {/* Animated gradient orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -70,7 +70,7 @@ export function HeroBanner() {
         />
       </div>
 
-      <div className="relative container mx-auto px-4 py-16 sm:py-24 md:py-32">
+      <div className="relative container mx-auto px-4 pt-12 pb-16 sm:pt-16 sm:pb-20 md:pt-20 md:pb-28">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -80,7 +80,7 @@ export function HeroBanner() {
         >
           <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium text-brand-300 border border-brand-500/30 bg-brand-500/10 backdrop-blur-sm">
             <Sparkles className="h-3.5 w-3.5 animate-pulse" />
-            27M+ Creative Assets — Free to Download
+            27M+ Creative Assets — Start with 3 Free Tokens
             <span className="ml-1 px-2 py-0.5 rounded-full bg-brand-500/30 text-xs font-bold text-brand-200">NEW</span>
           </div>
         </motion.div>
@@ -109,7 +109,7 @@ export function HeroBanner() {
               </AnimatePresence>
             </span>
             <br />
-            <span className="text-white/90">for every creator</span>
+            <span className="text-white/90">for every project</span>
           </h1>
         </motion.div>
 
@@ -120,8 +120,8 @@ export function HeroBanner() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="text-center text-base sm:text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 sm:mb-12"
         >
-          Create with AI tools, and unlimited stock, fonts, videos, music, templates & more.
-          All with a lifetime commercial license.
+          Access 27M+ premium assets — templates, fonts, videos, music & 3D — each with a lifetime commercial license.
+          Start with 3 free tokens, no credit card needed.
         </motion.p>
 
         {/* Search bar */}
@@ -155,7 +155,7 @@ export function HeroBanner() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-2 mb-12 sm:mb-20"
+          className="flex flex-wrap items-center justify-center gap-2 mb-10 sm:mb-14"
         >
           <span className="text-sm text-slate-500">Trending:</span>
           {TRENDING.map((term, i) => (

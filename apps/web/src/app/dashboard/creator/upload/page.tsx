@@ -45,22 +45,59 @@ export default function CreatorUploadPage() {
   }
 
   async function handleSubmit() {
+    if (!user?.id) return
     setUploading(true)
-    await new Promise((r) => setTimeout(r, 1200))
-    submitItem({
-      title: form.title || 'Untitled Asset',
-      description: form.description || 'No description provided.',
-      category: form.category || 'graphics',
-      subcategory: form.subcategory || 'Icons',
-      tags: form.tags,
-      thumbnailUrl: `https://picsum.photos/seed/${Date.now()}/400/300`,
-      isFree: true,
-      creatorId: user?.id ?? 'u2',
-      creatorName: user?.name ?? 'Creator',
-    })
-    setUploading(false)
-    setSubmitted(true)
-    toast({ title: 'Item submitted for review!', description: 'Our team will review your submission within 24–48 hours.' })
+    try {
+      await new Promise((r) => setTimeout(r, 800))
+
+      const thumbnailUrl = `https://picsum.photos/seed/${Date.now()}/400/300`
+
+      // Write to Supabase first
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      const { error } = await supabase.from('items').insert({
+        title: form.title || 'Untitled Asset',
+        description: form.description || 'No description provided.',
+        category: form.category || 'graphics',
+        subcategory: form.subcategory || null,
+        tags: form.tags,
+        thumbnail_url: thumbnailUrl,
+        preview_urls: [thumbnailUrl],
+        is_free: false,
+        creator_id: user.id,
+        status: 'pending',
+        downloads: 0,
+        views: 0,
+        rating: 0,
+        compatible_tools: form.compatibleTools,
+      })
+
+      if (error) {
+        console.error('Supabase insert error:', error)
+        throw error
+      }
+
+      // Also update local store for immediate feedback
+      submitItem({
+        title: form.title || 'Untitled Asset',
+        description: form.description || 'No description provided.',
+        category: form.category || 'graphics',
+        subcategory: form.subcategory || 'General',
+        tags: form.tags,
+        thumbnailUrl,
+        isFree: false,
+        tokenCost: 1,
+        creatorId: user.id,
+        creatorName: user.name ?? 'Creator',
+      })
+
+      setSubmitted(true)
+      toast({ title: '🎉 Submitted for review!', description: 'Our team will review your submission within 24–48 hours.' })
+    } catch (err) {
+      toast({ title: 'Upload failed', description: 'Please try again.', variant: 'destructive' })
+    } finally {
+      setUploading(false)
+    }
   }
 
   const selectedGroup = CATEGORY_GROUPS.find((g) => g.slug === form.category)

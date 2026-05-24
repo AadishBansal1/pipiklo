@@ -78,10 +78,8 @@ const nextConfig: NextConfig = {
   typescript: { ignoreBuildErrors: true },
 
   // Turbopack: pin root to monorepo to suppress multi-lockfile warning
-  experimental: {
-    turbo: {
-      root: 'C:/Users/Aadi/Downloads/Envato/pipiklo',
-    },
+  turbopack: {
+    root: 'C:/Users/Aadi/Downloads/Envato/pipiklo',
   },
 }
 

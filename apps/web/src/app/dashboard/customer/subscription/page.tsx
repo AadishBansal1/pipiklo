@@ -24,6 +24,20 @@ export default function CustomerTokensPage() {
     await new Promise((r) => setTimeout(r, 1400))
     addTokens(pack.tokens, pack.name, pack.price)
     toast({ title: `🎉 ${pack.tokens} tokens added!`, description: `New balance: ${(user?.tokens ?? 0) + pack.tokens} tokens` })
+
+    // Persist to Supabase in background
+    if (user?.id) {
+      import('@/lib/supabase/db').then(({ dbAddTokens, dbRecordPayment }) => {
+        dbAddTokens(user.id, pack.tokens).catch(console.error)
+        dbRecordPayment({
+          userId: user.id,
+          amount: pack.price,
+          packName: pack.name,
+          tokensAdded: pack.tokens,
+        }).catch(console.error)
+      }).catch(console.error)
+    }
+
     setPurchasing(null)
   }
 

@@ -31,11 +31,8 @@ export default function DashboardRouterPage() {
     // Clear pending role — it's been consumed
     localStorage.removeItem('pipiklo_pending_role')
 
-    if (role === 'creator') {
-      router.replace('/dashboard/creator')
-    } else {
-      router.replace('/dashboard/customer')
-    }
+    // Creator mode is hidden — all non-admin users go to customer dashboard
+    router.replace('/dashboard/customer')
   }, [isLoaded, isSignedIn, user, router])
 
   return (

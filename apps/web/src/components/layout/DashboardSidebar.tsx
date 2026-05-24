@@ -52,9 +52,11 @@ interface Props {
 }
 
 const NAV_MAP = { admin: ADMIN_NAV, customer: CUSTOMER_NAV, creator: CREATOR_NAV }
-const TITLE_MAP = { admin: 'Admin Panel', customer: 'My Account', creator: 'Creator Studio' }
+const TITLE_MAP = { admin: 'Admin Panel', customer: 'My Account', creator: 'My Account' }
 
 export function DashboardSidebar({ variant }: Props) {
+  // Creator mode is hidden — treat creator role as customer for now
+  const effectiveVariant: 'admin' | 'customer' = variant === 'creator' ? 'customer' : variant
   const pathname = usePathname()
   const { user, logout } = useAppStore()
   const { signOut } = useClerk()
@@ -86,14 +88,14 @@ export function DashboardSidebar({ variant }: Props) {
     }
   }
 
-  const nav = NAV_MAP[variant]
+  const nav = NAV_MAP[effectiveVariant]
 
   const SidebarContent = () => (
     <aside className="w-64 shrink-0 border-r min-h-full bg-muted/20 flex flex-col">
       <div className="p-4 border-b">
         <div className="flex items-center gap-2 mb-1">
           <Sparkles className="h-4 w-4 text-brand-500" />
-          <span className="font-bold text-sm">{TITLE_MAP[variant]}</span>
+          <span className="font-bold text-sm">{TITLE_MAP[effectiveVariant]}</span>
         </div>
         {user && (
           <div className="flex items-center gap-2 mt-2">
