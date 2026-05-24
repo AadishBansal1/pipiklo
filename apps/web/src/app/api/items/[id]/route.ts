@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-export const runtime = 'nodejs'
+export const runtime = 'edge'
 
 interface Params { params: Promise<{ id: string }> }
 

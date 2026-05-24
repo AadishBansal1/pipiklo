@@ -4,9 +4,6 @@ import { HeroBanner } from '@/components/home/HeroBanner'
 import { CategoryGrid } from '@/components/home/CategoryGrid'
 import { FeaturedItems } from '@/components/home/FeaturedItems'
 
-// ISR: homepage revalidates every 5 minutes
-export const revalidate = 300
-
 // Lazy-load below-the-fold sections — they don't block first paint
 const AIToolsShowcase   = dynamic(() => import('@/components/home/AIToolsShowcase').then((m) => m.AIToolsShowcase))
 const CuratedCollections = dynamic(() => import('@/components/home/CuratedCollections').then((m) => m.CuratedCollections))

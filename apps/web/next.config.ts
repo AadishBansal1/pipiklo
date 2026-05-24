@@ -1,4 +1,10 @@
 import type { NextConfig } from 'next'
+import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev'
+
+// Enable Cloudflare bindings in local dev (no-op in CI/Vercel)
+if (process.env.NODE_ENV === 'development') {
+  await setupDevPlatform().catch(() => {})
+}
 
 const nextConfig: NextConfig = {
   // ─── Image optimisation ────────────────────────────────────────────────────
@@ -21,7 +27,6 @@ const nextConfig: NextConfig = {
 
   // ─── Performance ──────────────────────────────────────────────────────────
   compress: true,
-  httpAgentOptions: { keepAlive: true },
   poweredByHeader: false,           // Don't advertise Next.js
 
   // ─── Security headers ─────────────────────────────────────────────────────

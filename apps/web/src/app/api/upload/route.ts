@@ -7,9 +7,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { v4 as uuidv4 } from 'uuid'
-
-export const runtime = 'nodejs'
+export const runtime = 'edge'
 
 const ALLOWED_BUCKETS = ['avatars', 'items', 'thumbnails'] as const
 const MAX_SIZE_MB = 50
@@ -32,7 +30,7 @@ export async function POST(req: NextRequest) {
     }
 
     const ext  = file.name.split('.').pop()?.toLowerCase() ?? 'bin'
-    const path = customPath ?? `${uuidv4()}.${ext}`
+    const path = customPath ?? `${crypto.randomUUID()}.${ext}`
 
     const supabase = await createClient()
     const arrayBuffer = await file.arrayBuffer()
